@@ -39,7 +39,7 @@
 ## 📦 Hướng Dẫn Cài Đặt & Khởi Chạy
 
 ### Cách 1: Chạy trực tiếp từ AppImage (Khuyên dùng)
-Tải file `WuWaVH-Launcher-x86_64.AppImage` từ mục [Releases](https://github.com/jingjo07/WuWaVH/releases):
+Tải file `WuWaVH-Launcher-x86_64.AppImage` từ mục [Releases](https://github.com/jingjo07/WuwaVH-Linux-Launcher/releases):
 ```bash
 chmod +x WuWaVH-Launcher-x86_64.AppImage
 ./WuWaVH-Launcher-x86_64.AppImage
