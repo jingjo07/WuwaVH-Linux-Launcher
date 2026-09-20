@@ -1114,6 +1114,7 @@ def get_status() -> dict:
         "installed_vh":   len(installed_paks) > 0 or bool(get_vh_version()),
         "has_game":       game_path is not None,
         "vh_version":     get_vh_version(),
+        "launcher_version": "1.0",
         "font_status":    get_font_status(),
         "launcher_info":  get_launcher_info(),
         "theme":          get_theme(),
