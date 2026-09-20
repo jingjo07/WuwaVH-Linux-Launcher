@@ -15,8 +15,6 @@ Launcher Việt Hóa Wuthering Waves trên Linux (Steam / Heroic).
 
   <br>
 
-  <img src="DEV.png" alt="WuWaVH Launcher Preview" width="800" style="border-radius: 10px;" />
-
 </div>
 
 ---
