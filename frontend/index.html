@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WuWaVH Launcher</title>
+  <link rel="stylesheet" href="style.css">
+  <link id="theme-stylesheet" rel="stylesheet" href="themes/classic/theme.css">
+</head>
+
+<body class="theme-classic">
+
+  <!-- ── Background Video (Seamless Javascript Fade Loop) ── -->
+  <div id="bg-fallback"></div>
+  <video id="bg-video-a" class="bg-video active" muted playsinline poster="assets/bg-poster.webp"></video>
+  <video id="bg-video-b" class="bg-video" muted playsinline poster="assets/bg-poster.webp"></video>
+  <div id="bg-overlay"></div>
+  <div id="bg-blur-overlay"></div>
+
+  <!-- ── Top Bar ── -->
+  <header id="topbar">
+    <div class="logo-wrap">
+      <img src="assets/icon_cor.png" alt="Wuthering Waves" class="logo-corner-img">
+    </div>
+
+    <!-- Classic Navigation Tabs -->
+    <nav id="topbar-nav" class="classic-only">
+      <span class="nav-tab active" id="tab-home">HOME</span>
+      <span class="nav-tab" id="tab-perf">HIỆU NĂNG</span>
+      <span class="nav-tab" id="tab-font">FONT</span>
+      <span class="nav-tab" id="tab-theme">THEME</span>
+    </nav>
+
+    <!-- Cyber Neon Header Branding (Logo & Version Badge) -->
+    <div class="cyber-logo-area cyber-only">
+      <img src="assets/icon_cor.png" alt="Wuthering Waves" class="cyber-logo-img">
+      <div class="cyber-ver-tag">
+        <span id="vh-version-cyber">VH v—</span>
+      </div>
+    </div>
+
+    <!-- Top Right Controls -->
+    <div class="topbar-right-controls">
+      <!-- Cyber Topbar Controls (Game Files + BGM Player) -->
+      <div class="cyber-top-controls cyber-only">
+        <button class="cyber-game-files-btn" id="cyber-btn-game-files" title="Mở thư mục cài đặt game">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+          </svg>
+          GAME FILES
+        </button>
+        <div class="cyber-topbar-divider"></div>
+        <div class="cyber-music-pod" id="cyber-music-pod">
+          <button class="cyber-music-btn" id="cyber-btn-play-music" title="Bật / Dừng nhạc & video nền">
+            <svg class="theme-svg-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+          </button>
+          <div class="cyber-vol-wrap">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            </svg>
+            <input type="range" class="cyber-volume-slider" id="cyber-volume-slider" min="0" max="100" value="35">
+          </div>
+        </div>
+      </div>
+
+      <button class="topbar-btn modern-only" id="btn-game-files" title="Mở thư mục game">
+        <svg class="theme-svg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+        </svg>
+        Game files
+      </button>
+      <div id="window-controls">
+        <div class="wctrl" id="btn-minimize" title="Thu nhỏ">&#8212;</div>
+        <div class="wctrl close" id="btn-close" title="Đóng">&#x2715;</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Modern Left Floating Pill Dock ── -->
+  <aside id="sidebar-dock" class="modern-only">
+    <div class="dock-inner">
+      <button class="dock-btn expand-btn" id="dock-expand-btn" title="Mở rộng menu">
+        <svg class="dock-icon theme-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="4"></rect>
+          <line x1="9" y1="3" x2="9" y2="21"></line>
+          <polyline points="14 9 17 12 14 15"></polyline>
+        </svg>
+      </button>
+      <div class="dock-divider"></div>
+      <button class="dock-btn tab-btn active" id="dock-tab-home" title="Trang chủ">
+        <svg class="dock-icon theme-svg-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <polygon points="5 3 19 12 5 21 5 3"></polygon>
+        </svg>
+      </button>
+      <button class="dock-btn tab-btn" id="dock-tab-perf" title="Hiệu năng">
+        <svg class="dock-icon theme-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+          <line x1="8" y1="21" x2="16" y2="21"></line>
+          <line x1="12" y1="17" x2="12" y2="21"></line>
+        </svg>
+      </button>
+      <button class="dock-btn tab-btn" id="dock-tab-font" title="Font tuỳ chỉnh">
+        <svg class="dock-icon theme-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="4 7 4 4 20 4 20 7"></polyline>
+          <line x1="9" y1="20" x2="15" y2="20"></line>
+          <line x1="12" y1="4" x2="12" y2="20"></line>
+        </svg>
+      </button>
+      <button class="dock-btn tab-btn" id="dock-tab-theme" title="Đổi Giao diện">
+        <svg class="dock-icon theme-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path
+            d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z">
+          </path>
+          <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
+          <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
+          <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
+          <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
+        </svg>
+      </button>
+      <div class="dock-spacer"></div>
+      <button class="dock-btn music-btn" id="dock-music-btn" title="Bật/Dừng nhạc">
+        <span id="dock-music-icon">
+          <svg class="theme-svg-icon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="6" y="4" width="4" height="16" rx="1"></rect>
+            <rect x="14" y="4" width="4" height="16" rx="1"></rect>
+          </svg>
+        </span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── Modern Left Expandable Drawer Sidebar ── -->
+  <div id="sidebar-drawer" class="modern-only">
+    <div class="drawer-header">
+      <div class="drawer-app-info">
+        <div class="drawer-avatar">
+          <img src="assets/icon.png" alt="WuWa">
+        </div>
+        <div class="drawer-titles">
+          <span class="drawer-main-title">Wuthering Waves</span>
+          <span class="drawer-sub-title">VIETNAMESE LAUNCHER</span>
+        </div>
+      </div>
+      <button class="drawer-collapse-btn" id="drawer-collapse-btn" title="Thu gọn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="4"></rect>
+          <line x1="9" y1="3" x2="9" y2="21"></line>
+          <polyline points="16 9 13 12 16 15"></polyline>
+        </svg>
+      </button>
+    </div>
+
+    <div class="drawer-menu-label">MENU</div>
+    <div class="drawer-nav">
+      <div class="drawer-nav-item active" id="drawer-item-home">
+        <span class="drawer-nav-icon">
+          <svg class="theme-svg-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+        </span>
+        <span class="drawer-nav-text">TRANG CHỦ</span>
+      </div>
+      <div class="drawer-nav-item" id="drawer-item-perf">
+        <span class="drawer-nav-icon">
+          <svg class="theme-svg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.2">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+          </svg>
+        </span>
+        <span class="drawer-nav-text">HIỆU NĂNG</span>
+      </div>
+      <div class="drawer-nav-item" id="drawer-item-font">
+        <span class="drawer-nav-icon">
+          <svg class="theme-svg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.2">
+            <polyline points="4 7 4 4 20 4 20 7"></polyline>
+            <line x1="9" y1="20" x2="15" y2="20"></line>
+            <line x1="12" y1="4" x2="12" y2="20"></line>
+          </svg>
+        </span>
+        <span class="drawer-nav-text">FONT TUỲ CHỈNH</span>
+      </div>
+      <div class="drawer-nav-item" id="drawer-item-theme">
+        <span class="drawer-nav-icon">
+          <svg class="theme-svg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
+            <path
+              d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z">
+            </path>
+          </svg>
+        </span>
+        <span class="drawer-nav-text">GIAO DIỆN (THEME)</span>
+      </div>
+    </div>
+
+    <!-- Modern Drawer Music Controls -->
+    <div class="drawer-music-ctrl">
+      <button class="btn-drawer-music" id="drawer-btn-play-music" title="Bật / Dừng nhạc & video nền">
+        <svg class="theme-svg-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <polygon points="5 3 19 12 5 21 5 3"></polygon>
+        </svg>
+      </button>
+      <input type="range" class="drawer-volume-slider" id="drawer-volume-slider" min="0" max="100" value="35">
+      <span class="drawer-vol-label" id="drawer-vol-label">35</span>
+    </div>
+
+  </div>
+
+  <!-- ── Cyber Neon Vertical Sidebar ── -->
+  <aside id="cyber-sidebar" class="cyber-only">
+    <div class="cyber-sidebar-nav-group">
+      <!-- Trang chủ (Home) -->
+      <button class="sb-icon active" id="cyber-nav-home" data-tab="home" title="Trang chủ">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+      </button>
+
+      <!-- Hiệu năng (Performance) -->
+      <button class="sb-icon" id="cyber-nav-perf" data-tab="perf" title="Hiệu năng & Tối ưu">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <rect x="2" y="3" width="20" height="14" rx="2" />
+          <line x1="8" y1="21" x2="16" y2="21" />
+          <line x1="12" y1="17" x2="12" y2="21" />
+        </svg>
+      </button>
+
+      <!-- Phông chữ (Font) -->
+      <button class="sb-icon" id="cyber-nav-font" data-tab="font" title="Cài đặt Phông chữ">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <polyline points="4 7 4 4 20 4 20 7"></polyline>
+          <line x1="9" y1="20" x2="15" y2="20"></line>
+          <line x1="12" y1="4" x2="12" y2="20"></line>
+        </svg>
+      </button>
+
+      <!-- Giao diện (Theme) -->
+      <button class="sb-icon" id="cyber-nav-theme" data-tab="theme" title="Đổi Giao diện Launcher">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M12 2a4.5 4.5 0 0 0 0 9 4.5 4.5 0 0 1 0 9 10 10 0 0 0 0-18z"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Bottom Sidebar Shortcut: Game Files -->
+    <div class="cyber-sidebar-nav-group">
+      <button class="sb-icon" id="cyber-nav-files" title="Mở thư mục cài game">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" viewBox="0 0 24 24">
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+        </svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── Bottom Layer (HOME) ── -->
+  <div id="bottom-layer">
+
+    <!-- ── Classic Home View (Royal Gold HUD Edition) ── -->
+    <div id="classic-home" class="classic-only">
+      <!-- Left Column: News Chronicle & Integrated Media Pod -->
+      <div class="classic-left-column">
+        <div id="news-panel" class="classic-hud-box">
+          <div class="hud-corner-bracket tl"></div>
+          <div class="hud-corner-bracket tr"></div>
+          <div class="hud-corner-bracket bl"></div>
+          <div class="hud-corner-bracket br"></div>
+
+          <div class="news-toprow">
+            <span class="version-tag" id="ver-tag">v—</span>
+            <span class="news-label">✦ THÔNG BÁO BẢN DỊCH</span>
+            <span class="news-date" id="news-date">—</span>
+          </div>
+
+          <div class="news-content-scrollable">
+            <div class="news-content" id="news-content">
+              Đang tải thông tin phiên bản...
+            </div>
+          </div>
+
+          <div id="music-ctrl" class="classic-music-hud">
+            <div class="classic-music-row">
+              <button class="btn-music classic-music-btn" id="btn-play-music" title="Bật / Dừng nhạc & video nền">
+                <svg class="theme-svg-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+              </button>
+              <input type="range" class="volume-slider classic-vol-slider" id="volume-slider" min="0" max="100" value="35">
+              <span class="vol-label" id="vol-label">35</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="bottom-spacer"></div>
+
+      <!-- Right Column: Launch Options & Master Gold Action Core -->
+      <div id="action-area" class="classic-action-column">
+        <!-- Classic Launch Options Bar -->
+        <div class="launch-options-bar classic-bar" id="launch-options-classic">
+          <div class="launch-toggle-card active" id="toggle-dx11-classic"
+            title="Chạy DirectX 11 (DXVK) ổn định, chống crash Fatal Error trên Linux">
+            <div class="toggle-switch-pill">
+              <div class="toggle-thumb"></div>
+            </div>
+            <span class="toggle-label">DirectX 11</span>
+          </div>
+          <div class="launch-toggle-card active" id="toggle-csharp-classic"
+            title="Bật môi trường C# (-ForceEnableCSharpEnvironment)">
+            <div class="toggle-switch-pill">
+              <div class="toggle-thumb"></div>
+            </div>
+            <span class="toggle-label">CSharp</span>
+          </div>
+        </div>
+
+        <!-- Progress bar when updating / downloading -->
+        <div class="classic-progress-box" id="classic-launch-progress" style="display: none;">
+          <div class="classic-progress-meta">
+            <span class="classic-progress-title" id="classic-progress-status">ĐANG TẢI...</span>
+            <span class="classic-progress-pct" id="classic-progress-pct">0%</span>
+          </div>
+          <div class="classic-progress-track">
+            <div class="classic-progress-bar-fill" id="classic-progress-bar" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <div id="btn-row" class="classic-btn-row">
+          <div id="btn-menu-toggle" class="classic-menu-btn" title="Tùy chọn nhanh">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </div>
+          <button id="btn-play" class="classic-play-btn">
+            <span class="classic-play-text">CHƠI GAME</span>
+            <span class="classic-play-sub">LAUNCH</span>
+          </button>
+        </div>
+
+        <div id="version-footer" class="classic-version-footer">
+          <span id="vh-version" class="footer-vh-lbl">VH v—</span> &bull; 
+          <span id="launcher-badge" class="launcher-tag" title="Nhấn để đổi Launcher chạy game">
+            <svg class="theme-svg-inline" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H9v2H7v-2H5v-2h2V9h2v2h2v2zm6 2h-2v-2h2v2zm0-4h-2V7h2v2z" />
+            </svg>
+            <span id="launcher-badge-txt">Steam</span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Modern Home View (Update News Panel + Mint Action Row) ── -->
+    <div id="modern-home" class="modern-only">
+      <div class="modern-hero-stack">
+        <!-- Update Info / News Card -->
+        <div class="modern-card modern-news-card">
+          <div class="modern-news-header">
+            <span class="modern-news-badge" id="ver-tag-modern">v—</span>
+            <span class="modern-news-label">THÔNG BÁO VIỆT HOÁ</span>
+            <span class="modern-news-date" id="news-date-modern">—</span>
+          </div>
+          <div class="modern-news-content" id="news-content-modern">
+            Đang tải thông tin phiên bản...
+          </div>
+        </div>
+
+        <!-- Launch Options Bar (DirectX 11 + CSharp Environment) -->
+        <div class="launch-options-bar" id="launch-options-modern">
+          <div class="launch-toggle-card active" id="toggle-dx11-modern"
+            title="Chạy DirectX 11 (DXVK) ổn định, chống crash Fatal Error trên Linux">
+            <div class="toggle-switch-pill">
+              <div class="toggle-thumb"></div>
+            </div>
+            <span class="toggle-label">DirectX 11</span>
+          </div>
+          <div class="launch-toggle-card active" id="toggle-csharp-modern"
+            title="Bật môi trường C# (-ForceEnableCSharpEnvironment)">
+            <div class="toggle-switch-pill">
+              <div class="toggle-thumb"></div>
+            </div>
+            <span class="toggle-label">CSharp</span>
+          </div>
+        </div>
+
+        <!-- Progress bar when updating / downloading -->
+        <div class="modern-progress-box" id="modern-launch-progress" style="display: none;">
+          <div class="modern-progress-meta">
+            <span class="modern-progress-title" id="modern-progress-status">ĐANG TẢI...</span>
+            <span class="modern-progress-pct" id="modern-progress-pct">0%</span>
+          </div>
+          <div class="modern-progress-track">
+            <div class="modern-progress-bar-fill" id="modern-progress-bar" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <!-- Modern Action Row -->
+        <div class="modern-action-row">
+          <button class="btn-modern-menu" id="btn-menu-toggle-modern" title="Tuỳ chọn">
+            <span>☰</span>
+          </button>
+          <button class="btn-modern-play" id="btn-play-modern">
+            <span class="play-text">CHƠI GAME</span>
+            <span class="play-arrow">&rarr;</span>
+          </button>
+        </div>
+
+        <div class="modern-footer-tag">
+          <span id="vh-version-modern">VH v—</span> &nbsp;&bull;&nbsp; <span
+            id="launcher-badge-modern" class="launcher-tag" title="Nhấn để đổi Launcher chạy game">
+            <svg class="theme-svg-inline" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H9v2H7v-2H5v-2h2V9h2v2h2v2zm6 2h-2v-2h2v2zm0-4h-2V7h2v2z" />
+            </svg>
+            <span id="launcher-badge-txt-modern">Steam</span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Cyber Neon Home View (Wuwa UI Remake) ── -->
+    <div id="cyber-home" class="cyber-only">
+      <!-- Grid overlay -->
+      <div class="cyber-grid-overlay"></div>
+
+      <!-- Ambient Glow Blobs -->
+      <div class="cyber-glow-blob blob-cyan"></div>
+      <div class="cyber-glow-blob blob-magenta"></div>
+      <div class="cyber-glow-blob blob-purple"></div>
+
+      <!-- Animated Scanline -->
+      <div class="cyber-scanline"></div>
+
+      <!-- Corner Decors -->
+      <div class="cyber-corner-tr"></div>
+      <div class="cyber-corner-bl"></div>
+
+      <!-- Center Main Body (News Card + Launch Config Card) -->
+      <div class="cyber-main-body">
+        <!-- News Card -->
+        <div class="cyber-news-card holo-card corner-tl corner-br">
+          <div class="cyber-news-header">
+            <div class="cyber-news-badge">
+              <span id="ver-tag-cyber">v—</span>
+            </div>
+            <span class="cyber-news-title glitch-text" data-text="THÔNG BÁO VIỆT HOÁ">
+              THÔNG BÁO VIỆT HOÁ
+            </span>
+            <span class="cyber-news-date" id="news-date-cyber">—</span>
+          </div>
+          <div class="cyber-news-divider"></div>
+          <div class="cyber-news-body" id="news-content-cyber">
+            Đang tải thông tin phiên bản và cập nhật...
+          </div>
+        </div>
+
+        <!-- Launch Config Card -->
+        <div class="cyber-config-card holo-card">
+          <div class="cyber-config-label">CẤU HÌNH</div>
+          <div class="cyber-toggle-row active" id="toggle-dx11-cyber" title="Chạy DirectX 11 (DXVK) ổn định, chống crash">
+            <span class="cyber-toggle-title">DirectX 11</span>
+            <div class="neon-toggle on">
+              <div class="knob"></div>
+            </div>
+          </div>
+          <div class="cyber-toggle-divider"></div>
+          <div class="cyber-toggle-row active" id="toggle-csharp-cyber" title="Bật môi trường C# (-ForceEnableCSharpEnvironment)">
+            <span class="cyber-toggle-title">CSharp Mode</span>
+            <div class="neon-toggle on">
+              <div class="knob"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Action Bar -->
+      <div class="cyber-action-bar">
+        <!-- Progress bar when launching/downloading -->
+        <div class="cyber-progress-box" id="cyber-launch-progress" style="display: none;">
+          <div class="cyber-progress-meta">
+            <span class="cyber-progress-title" id="cyber-progress-status">ĐANG KHỞI CHẠY...</span>
+            <span class="cyber-progress-pct" id="cyber-progress-pct">0%</span>
+          </div>
+          <div class="cyber-progress-track">
+            <div class="cyber-progress-bar-fill" id="cyber-progress-bar" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <!-- Action Row -->
+        <div class="cyber-action-row">
+          <!-- Left Meta -->
+          <div class="cyber-meta-group">
+            <div class="cyber-platform-badge" id="launcher-badge-cyber" title="Nhấn để đổi Launcher chạy game">
+              <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.029 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.606 0 11.979 0z"/>
+              </svg>
+              <span id="launcher-badge-txt-cyber">Steam</span>
+            </div>
+            <div class="cyber-meta-divider"></div>
+            <div class="cyber-status-text" id="cyber-status-text">
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+              </svg>
+              <span id="cyber-game-size-label">Sẵn sàng</span>
+            </div>
+          </div>
+
+          <!-- Quick Options Menu Button -->
+          <button class="cyber-menu-btn" id="btn-menu-toggle-cyber" title="Tuỳ chọn nhanh">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24">
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+
+          <!-- Huge Neon Play Button -->
+          <button class="play-btn-neon" id="btn-play-cyber">
+            <span class="play-btn-text" id="cyber-play-title">CHƠI GAME</span>
+            <span class="play-btn-icon">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Context Menu (Shared) ── -->
+    <div id="ctx-menu">
+      <div class="ctx-item" id="ctx-folder">
+        <span class="ctx-icon">
+          <svg class="theme-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+          </svg>
+        </span> Thư mục game
+      </div>
+      <div class="ctx-item" id="ctx-update">
+        <span class="ctx-icon">
+          <svg class="theme-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+        </span> Cập nhật Việt Hoá
+      </div>
+      <div class="ctx-item" id="ctx-winedlloverrides">
+        <span class="ctx-icon">
+          <svg class="theme-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+            <path d="M7 8h10M7 12h4"></path>
+          </svg>
+        </span> Cài WINEDLLOVERRIDES
+      </div>
+      <div class="ctx-item" id="ctx-update-launcher">
+        <span class="ctx-icon">
+          <svg class="theme-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
+            <polygon
+              points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+            </polygon>
+          </svg>
+        </span> Cập nhật Launcher (Media)
+      </div>
+      <div class="ctx-item" id="ctx-kill">
+        <span class="ctx-icon">
+          <svg class="theme-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </span> Buộc thoát game
+      </div>
+      <div class="ctx-item" id="ctx-credits">
+        <span class="ctx-icon">
+          <svg class="theme-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </span> Thông tin &amp; Tác giả
+      </div>
+      <div class="ctx-item danger" id="ctx-uninstall">
+        <span class="ctx-icon">
+          <svg class="theme-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+        </span> Gỡ cài đặt Việt Hoá
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── High Performance Mode Page (Tab View) ── -->
+  <div id="perf-page">
+    <div class="perf-container">
+      
+      <!-- Top Title & Badge Bar -->
+      <!-- Top Title & Badge Bar -->
+      <div class="perf-header">
+        <div class="perf-title-row">
+          <div class="perf-title-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+            </svg>
+          </div>
+          <h2 class="perf-main-title">Thiết lập đồ hoạ</h2>
+          <span class="perf-mode-badge" id="perf-mode-badge">● Simple mode</span>
+        </div>
+      </div>
+
+      <!-- Section: CHẾ ĐỘ -->
+      <div class="perf-section-title">CHẾ ĐỘ</div>
+      <div class="perf-mode-switch-bar">
+        <button class="perf-mode-btn active" id="btn-mode-simple">Simple</button>
+        <button class="perf-mode-btn" id="btn-mode-advanced">Advanced</button>
+      </div>
+
+      <!-- SUBVIEW: SIMPLE MODE -->
+      <div class="perf-mode-subview active" id="perf-mode-subview-simple">
+        <div class="perf-section-title">PRESET DỰNG SẴN</div>
+        
+        <!-- Dropdown Card -->
+        <div class="perf-preset-select-card">
+          <div class="perf-preset-select-left">
+            <span class="perf-preset-select-label">Mức đồ hoạ</span>
+            <span class="perf-preset-select-source">Nguồn: AlteriaX/WuWa-Configs</span>
+          </div>
+          <div class="perf-preset-select-right">
+            <select id="perf-preset-dropdown" class="perf-preset-dropdown">
+              <option value="config-1">Cực cao</option>
+              <option value="config-2">Cao</option>
+              <option value="config-3" selected>Trung bình</option>
+              <option value="config-4">Tiết kiệm</option>
+              <option value="config-5">Siêu nhẹ</option>
+              <option value="default">Mặc định (Khôi phục gốc)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Preset Detail Box -->
+        <div class="perf-preset-detail-box" id="perf-preset-detail-box">
+          <div class="perf-preset-detail-header">
+            <span class="perf-preset-detail-title" id="perf-detail-title">Vừa lừa</span>
+            <span class="perf-preset-detail-subtitle" id="perf-detail-subtitle">Cân bằng hiệu năng và hình ảnh</span>
+          </div>
+          <div class="perf-preset-gpu-label">GPU PHÙ HỢP</div>
+          <div class="perf-preset-gpu-desc" id="perf-detail-gpu">
+            RTX 4060 / 4050 / 3060 / 3050; GTX 1660 SUPER/Ti / 1080 / 1070 Ti; RX 7600 / 6700 XT / 6600 / 5700 / 5600 XT; Arc B580 / B570 / A770 / A750 / A580
+          </div>
+        </div>
+
+        <!-- Big Action Button -->
+        <button class="perf-action-btn" id="perf-apply-btn">ÁP DỤNG PRESET</button>
+      </div>
+
+      <!-- SUBVIEW: ADVANCED MODE -->
+      <div class="perf-mode-subview" id="perf-mode-subview-advanced" style="display:none;">
+        <div class="perf-section-title-row">
+          <span class="perf-section-title">TÙY CHỈNH NÂNG CAO</span>
+          <div class="perf-adv-actions">
+            <button class="perf-tool-btn" id="perf-view-ini-btn">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              Xem Engine.ini
+            </button>
+            <button class="perf-tool-btn danger" id="perf-restore-ini-btn">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+              Khôi phục gốc
+            </button>
+          </div>
+        </div>
+
+        <!-- Collapsible Engine.ini Viewer Box -->
+        <div class="perf-ini-modal" id="perf-ini-modal" hidden>
+          <div class="perf-ini-modal-header">
+            <span>Nội dung Engine.ini hiện tại:</span>
+            <button id="perf-ini-close-btn" class="perf-ini-close">✕ Đóng</button>
+          </div>
+          <pre class="perf-ini-code" id="perf-ini-code">Đang tải...</pre>
+        </div>
+
+        <div class="perf-grid-2col">
+          <div class="perf-item-card">
+            <div class="perf-item-info">
+              <span class="perf-item-title">Chống khựng nạp map</span>
+              <span class="perf-item-sub">World Partition Scale &middot; BEST: Bật</span>
+            </div>
+            <label class="perf-switch">
+              <input type="checkbox" id="perf-toggle-wp">
+              <span class="perf-slider"></span>
+            </label>
+          </div>
+
+          <div class="perf-item-card">
+            <div class="perf-item-info">
+              <span class="perf-item-title">Mượt hoạt ảnh combat</span>
+              <span class="perf-item-sub">Animation URO &middot; BEST: Bật</span>
+            </div>
+            <label class="perf-switch">
+              <input type="checkbox" id="perf-toggle-uro">
+              <span class="perf-slider"></span>
+            </label>
+          </div>
+
+          <div class="perf-item-card">
+            <div class="perf-item-info">
+              <span class="perf-item-title">Đẩy hiệu ứng sang GPU</span>
+              <span class="perf-item-sub">Async Compute FX &middot; BEST: Bật</span>
+            </div>
+            <label class="perf-switch">
+              <input type="checkbox" id="perf-toggle-async-fx">
+              <span class="perf-slider"></span>
+            </label>
+          </div>
+
+          <div class="perf-item-card">
+            <div class="perf-item-info">
+              <span class="perf-item-title">Chống vẽ đè pixel</span>
+              <span class="perf-item-sub">Early-Z Pass &middot; BEST: Bật</span>
+            </div>
+            <label class="perf-switch">
+              <input type="checkbox" id="perf-toggle-early-z">
+              <span class="perf-slider"></span>
+            </label>
+          </div>
+
+          <div class="perf-item-card">
+            <div class="perf-item-info">
+              <span class="perf-item-title">Tối ưu bóng đổ 1 tầng</span>
+              <span class="perf-item-sub">CSM Cascades &middot; Tối ưu</span>
+            </div>
+            <label class="perf-switch">
+              <input type="checkbox" id="perf-toggle-shadow-csm">
+              <span class="perf-slider"></span>
+            </label>
+          </div>
+
+          <div class="perf-item-card">
+            <div class="perf-item-info">
+              <span class="perf-item-title">Giảm cự ly vẽ cỏ cây</span>
+              <span class="perf-item-sub">Foliage Culling &middot; Tối ưu</span>
+            </div>
+            <label class="perf-switch">
+              <input type="checkbox" id="perf-toggle-foliage-cull">
+              <span class="perf-slider"></span>
+            </label>
+          </div>
+          
+          <div class="perf-item-card">
+            <div class="perf-item-info">
+              <span class="perf-item-title">Tắt bóng đổ hoàn toàn</span>
+              <span class="perf-item-sub">Shadow Quality &middot; Tắt</span>
+            </div>
+            <label class="perf-switch">
+              <input type="checkbox" id="perf-toggle-shadow">
+              <span class="perf-slider"></span>
+            </label>
+          </div>
+
+          <div class="perf-item-card">
+            <div class="perf-item-info">
+              <span class="perf-item-title">Phản chiếu SSR</span>
+              <span class="perf-item-sub">Reflection &middot; Tắt để tăng FPS</span>
+            </div>
+            <label class="perf-switch">
+              <input type="checkbox" id="perf-toggle-reflection">
+              <span class="perf-slider"></span>
+            </label>
+          </div>
+
+          <div class="perf-item-card">
+            <div class="perf-item-info">
+              <span class="perf-item-title">Tắt hậu kỳ &amp; Motion Blur</span>
+              <span class="perf-item-sub">PostProcess &middot; BEST: Tắt</span>
+            </div>
+            <label class="perf-switch">
+              <input type="checkbox" id="perf-toggle-postprocess">
+              <span class="perf-slider"></span>
+            </label>
+          </div>
+
+          <div class="perf-item-card">
+            <div class="perf-item-info">
+              <span class="perf-item-title">Tắt hẳn thảm cỏ</span>
+              <span class="perf-item-sub">Grass Density &middot; Tắt</span>
+            </div>
+            <label class="perf-switch">
+              <input type="checkbox" id="perf-toggle-grass">
+              <span class="perf-slider"></span>
+            </label>
+          </div>
+
+          <div class="perf-item-card">
+            <div class="perf-item-info">
+              <span class="perf-item-title">Mây &amp; Sương Kuro</span>
+              <span class="perf-item-sub">Volumetric Cloud/Fog &middot; Tắt</span>
+            </div>
+            <label class="perf-switch">
+              <input type="checkbox" id="perf-toggle-kuro">
+              <span class="perf-slider"></span>
+            </label>
+          </div>
+
+          <div class="perf-item-card">
+            <div class="perf-item-info">
+              <span class="perf-item-title">Bắt buộc chi tiết linh kiện</span>
+              <span class="perf-item-sub">Force Component LOD</span>
+            </div>
+            <label class="perf-switch">
+              <input type="checkbox" id="perf-toggle-force-lod">
+              <span class="perf-slider"></span>
+            </label>
+          </div>
+
+          <div class="perf-item-card slider-card">
+            <div class="perf-item-info">
+              <span class="perf-item-title">Độ phân giải hiển thị</span>
+              <span class="perf-item-sub">Screen Percentage &middot; 50% - 100%</span>
+            </div>
+            <div class="perf-slider-row">
+              <input type="range" class="perf-range" id="perf-slider-screen-pct" min="50" max="100" step="5" value="100">
+              <span class="perf-val-label" id="perf-val-screen-pct">100%</span>
+            </div>
+          </div>
+
+          <div class="perf-item-card slider-card">
+            <div class="perf-item-info">
+              <span class="perf-item-title">Tầm nhìn xa tổng quan</span>
+              <span class="perf-item-sub">ViewDistanceScale &middot; Gốc: 1.0 &middot; 0.4 - 1.2</span>
+            </div>
+            <div class="perf-slider-row">
+              <input type="range" class="perf-range" id="perf-slider-view-dist" min="0.4" max="1.2" step="0.1" value="1.0">
+              <span class="perf-val-label" id="perf-val-view-dist">1.0</span>
+            </div>
+          </div>
+
+          <div class="perf-item-card slider-card">
+            <div class="perf-item-info">
+              <span class="perf-item-title">Độ sắc nét tĩnh vật thể</span>
+              <span class="perf-item-sub">StaticMeshLODScale &middot; Gốc: 1.0 &middot; 0.5 - 1.5</span>
+            </div>
+            <div class="perf-slider-row">
+              <input type="range" class="perf-range" id="perf-slider-static-lod" min="0.5" max="1.5" step="0.1" value="1.0">
+              <span class="perf-val-label" id="perf-val-static-lod">1.0</span>
+            </div>
+          </div>
+
+          <div class="perf-item-card slider-card">
+            <div class="perf-item-info">
+              <span class="perf-item-title">Độ chi tiết nhân vật &amp; quái</span>
+              <span class="perf-item-sub">SkeletalMeshLODBias &middot; 0 (Đẹp) - 2 (Nhẹ)</span>
+            </div>
+            <div class="perf-slider-row">
+              <input type="range" class="perf-range" id="perf-slider-skel-lod" min="0" max="2" step="1" value="0">
+              <span class="perf-val-label" id="perf-val-skel-lod">0</span>
+            </div>
+          </div>
+
+          <div class="perf-item-card slider-card">
+            <div class="perf-item-info">
+              <span class="perf-item-title">Khoảng cách ẩn NPC</span>
+              <span class="perf-item-sub">NpcDisappearDistance &middot; Gốc: 2000 &middot; 500-4000</span>
+            </div>
+            <div class="perf-slider-row">
+              <input type="range" class="perf-range" id="perf-slider-npc-dist" min="500" max="4000" step="250" value="2000">
+              <span class="perf-val-label" id="perf-val-npc-dist">2000</span>
+            </div>
+          </div>
+
+          <div class="perf-item-card select-card">
+            <div class="perf-item-info">
+              <span class="perf-item-title">Lọc bất đẳng hướng</span>
+              <span class="perf-item-sub">MaxAnisotropy &middot; Gốc: 16x</span>
+            </div>
+            <div class="perf-select-wrap">
+              <select class="perf-select" id="perf-select-aniso">
+                <option value="1">1x</option>
+                <option value="2">2x</option>
+                <option value="4">4x</option>
+                <option value="8">8x</option>
+                <option value="16" selected>16x</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <button class="perf-action-btn" id="perf-save-advanced-btn">LƯU CẤU HÌNH ADVANCED</button>
+      </div>
+
+      <!-- Footer Notice matching screenshot -->
+      <div class="perf-footer-notice">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        <span>Khởi động lại game sau khi áp preset hoặc lưu Advanced để chắc chắn nhận cấu hình mới.</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Font Page (Tab View) ── -->
+  <div id="font-page">
+
+    <!-- ── Classic Font Page Layout (Royal Gold HUD Container) ── -->
+    <div id="classic-font-view" class="classic-font-view classic-only">
+      <div class="classic-font-container">
+        
+        <!-- Header Row -->
+        <div class="classic-font-header">
+          <div class="classic-font-icon-badge">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <polyline points="4 7 4 4 20 4 20 7"></polyline>
+              <line x1="9" y1="20" x2="15" y2="20"></line>
+              <line x1="12" y1="4" x2="12" y2="20"></line>
+            </svg>
+          </div>
+          <div class="classic-font-header-text">
+            <h2 class="classic-font-title">Quản Lý Phông Chữ</h2>
+            <p class="classic-font-subtitle">Tùy biến phông chữ hiển thị trong game Wuthering Waves Việt Hoá</p>
+          </div>
+        </div>
+
+        <!-- Current Font Card -->
+        <div class="classic-font-card current-font-box">
+          <div class="classic-card-top-row">
+            <span class="classic-section-tag">PHÔNG CHỮ HIỆN TẠI</span>
+            <button class="classic-font-restore-btn" id="font-install-default" title="Khôi phục font LaguSans mặc định">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <polyline points="1 4 1 10 7 10"></polyline>
+                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+              </svg>
+              Khôi phục gốc
+            </button>
+          </div>
+          <div class="classic-font-status-row">
+            <div class="classic-status-icon-box" id="font-status-icon">
+              <svg class="theme-svg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="4 7 4 4 20 4 20 7"></polyline>
+                <line x1="9" y1="20" x2="15" y2="20"></line>
+                <line x1="12" y1="4" x2="12" y2="20"></line>
+              </svg>
+            </div>
+            <div class="classic-status-info">
+              <div class="classic-font-current-name" id="font-current">Đang kiểm tra...</div>
+              <div class="classic-font-current-detail" id="font-detail">Phông chữ hệ thống</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions Section -->
+        <div class="classic-font-actions-wrap">
+          <span class="classic-section-tag">CÀI ĐẶT PHÔNG CHỮ MỚI</span>
+          <div class="classic-font-actions-grid">
+            
+            <div class="classic-action-tile" id="font-pick-custom">
+              <div class="tile-icon-box">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                </svg>
+              </div>
+              <div class="tile-content">
+                <div class="tile-title">Cài đặt Font TTF / OTF</div>
+                <div class="tile-desc">Tự động nạp, chuyển đổi sang PAK và cài đặt vào game</div>
+              </div>
+              <div class="tile-arrow">&rarr;</div>
+            </div>
+
+            <div class="classic-action-tile secondary" id="font-pick-pak">
+              <div class="tile-icon-box">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                  <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                  <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                </svg>
+              </div>
+              <div class="tile-content">
+                <div class="tile-title">Cài font từ file .PAK</div>
+                <div class="tile-desc">Sao chép & đổi tên trực tiếp file PAK font có sẵn</div>
+              </div>
+              <div class="tile-arrow">&rarr;</div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── Modern & Cyber Font Page Layout ── -->
+    <div id="modern-font-view" class="modern-font-container modern-cyber-font">
+      <div class="modern-font-header">
+        <span class="modern-font-a-icon">A</span>
+        <div class="modern-font-header-text">
+          <h2 class="modern-font-main-title">Cài Font Tuỳ Chỉnh</h2>
+          <p class="modern-font-subtitle">Thay thế font mặc định của bản Việt Hoá bằng font của bạn (TTF, OTF hoặc PAK)</p>
+        </div>
+      </div>
+
+      <!-- Card 1: Current Font Status -->
+      <div class="modern-font-card current-font-box">
+        <div class="current-font-info">
+          <span class="current-font-label">Font hiện tại:</span>
+          <strong class="current-font-val" id="modern-font-current-val">Đang kiểm tra...</strong>
+        </div>
+        <button class="btn-modern-restore" id="modern-btn-restore-default"
+          title="Khôi phục font LaguSans Bold mặc định">
+          <svg class="theme-svg-inline" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
+            <polyline points="1 4 1 10 7 10"></polyline>
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+          </svg>
+          Dùng font gốc
+        </button>
+      </div>
+
+      <!-- Card 2: Choose new Font -->
+      <div class="modern-font-field-group">
+        <label class="modern-field-label">FILE FONT MỚI <small>(TTF / OTF / PAK)</small></label>
+        <div class="modern-input-row">
+          <input type="text" class="modern-text-input" id="modern-font-path" placeholder="Chưa chọn file" readonly>
+          <button class="btn-modern-browse" id="modern-btn-browse">DUYỆT...</button>
+        </div>
+      </div>
+
+      <!-- Card 3: Install Action Button -->
+      <div class="modern-font-actions">
+        <button class="btn-modern-install" id="modern-btn-install">
+          <span>&rarr;</span> CÀI FONT NÀY
+        </button>
+        <button class="btn-modern-pak-install" id="modern-btn-pick-pak" title="Chọn file PAK có sẵn để copy và cài thẳng vào game">
+          <svg class="theme-svg-inline" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+          </svg>
+          CÀI TỪ FILE .PAK
+        </button>
+      </div>
+    </div>
+
+    <!-- Progress Indicator (Shared) -->
+    <div class="font-progress" id="font-progress" style="display:none">
+      <div class="font-progress-text" id="font-progress-text">Đang xử lý...</div>
+    </div>
+
+  </div>
+
+  <!-- ── Theme Page (Tab View) ── -->
+  <div id="theme-page">
+    <div class="theme-page-container">
+      <div class="theme-page-header">
+        <div class="theme-header-badge">✦ BỘ SƯU TẬP GIAO DIỆN</div>
+        <div class="theme-page-title">Chọn Giao Diện Launcher</div>
+        <div class="theme-page-subtitle">Thay đổi phong cách hiển thị, màu sắc ánh sáng và bố cục Launcher tức thì</div>
+      </div>
+
+      <div class="theme-grid" id="theme-list">
+        <!-- Rendered dynamically from themes.js -->
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+  <!-- ── Game path modal ── -->
+  <div id="path-modal">
+    <div class="path-card">
+      <div class="path-title">⚠ Không tìm thấy thư mục game</div>
+      <div class="path-desc">
+        Nhập đường dẫn thư mục Wuthering Waves (thư mục chứa Client/, Binaries/...):
+      </div>
+      <div class="path-input-wrap">
+        <input type="text" class="path-input" id="path-input" placeholder="/home/user/Games/WutheringWaves">
+        <button class="btn-modal primary" onclick="submitPath()">OK</button>
+      </div>
+      <div class="modal-status" id="path-status"></div>
+    </div>
+  </div>
+
+  <!-- ── Launcher Selection Modal ── -->
+  <div id="launcher-modal">
+    <div class="launcher-card">
+      <div class="launcher-title">Chọn Launcher chạy Game</div>
+      <div class="launcher-desc">Chọn ứng dụng để khởi chạy Wuthering Waves cùng cấu hình Proton / Wine:</div>
+
+      <div class="launcher-options">
+        <div class="launcher-option-card" id="opt-steam" onclick="selectLauncher('steam')">
+          <div class="launcher-opt-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M12 2a10 10 0 0 0-10 10c0 4.7 3.25 8.65 7.66 9.72l2.45-3.57a3.5 3.5 0 0 1-.11-1.15l-3.32-1.39a2.5 2.5 0 1 1 .63-1.52l3.4 1.43a3.5 3.5 0 1 1 5.94 1.98l-3.53 2.47A10 10 0 1 0 12 2zm3.5 10.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z" />
+            </svg>
+          </div>
+          <div class="launcher-opt-info">
+            <div class="launcher-opt-name">Steam</div>
+            <div class="launcher-opt-detail" id="steam-status-detail">Chạy qua Steam Runtime (Headless)</div>
+          </div>
+          <span class="launcher-opt-badge" id="steam-badge">Khuyên dùng</span>
+        </div>
+
+        <div class="launcher-option-card" id="opt-heroic" onclick="selectLauncher('heroic')">
+          <div class="launcher-opt-icon heroic-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.8l7 3.5v7.4l-7 3.5-7-3.5V8.3l7-3.5zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z" />
+            </svg>
+          </div>
+          <div class="launcher-opt-info">
+            <div class="launcher-opt-name">Heroic Games Launcher</div>
+            <div class="launcher-opt-detail" id="heroic-status-detail">Chạy qua Heroic Wine/Proton Prefix</div>
+          </div>
+          <span class="launcher-opt-badge" id="heroic-badge">Kiểm tra...</span>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-modal primary" onclick="closeLauncherModal()">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Credit / About Modal ── -->
+  <div id="credit-modal">
+    <div class="credit-card">
+      <div class="credit-header">
+        <div class="credit-badge">THÔNG TIN DỰ ÁN</div>
+        <div class="credit-title">✦ WuWaVH Launcher Linux ✦</div>
+        <div class="credit-desc">Dự án Việt Hoá Wuthering Waves &amp; Trình khởi chạy tối ưu cho Linux</div>
+      </div>
+
+      <div class="credit-list">
+        <!-- JingJo Item -->
+        <div class="credit-item">
+          <div class="credit-icon-wrap dev">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+          </div>
+          <div class="credit-info">
+            <div class="credit-role">Phát triển Launcher Linux</div>
+            <div class="credit-author">JingJo</div>
+          </div>
+        </div>
+
+        <!-- DangDev Item -->
+        <div class="credit-item">
+          <div class="credit-icon-wrap trs">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 8l6 6"></path>
+              <path d="M4 14l6-6 2-3"></path>
+              <path d="M2 5h12"></path>
+              <path d="M7 2h1"></path>
+              <path d="M22 22l-5-10-5 10"></path>
+              <path d="M14 18h6"></path>
+            </svg>
+          </div>
+          <div class="credit-info">
+            <div class="credit-role">Bản dịch &amp; Mod Việt Hoá</div>
+            <div class="credit-author">DangDev</div>
+          </div>
+        </div>
+
+        <!-- Discord Community Item -->
+        <div class="credit-item discord-item" onclick="openDiscordLink()">
+          <div class="credit-icon-wrap discord">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.894.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+            </svg>
+          </div>
+          <div class="credit-info">
+            <div class="credit-role">Cộng đồng Discord WuWaVH</div>
+            <div class="credit-author discord-link">discord.gg/uNRyaHJR6 <span class="credit-ext-arrow">↗</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-modal primary" onclick="closeCreditModal()">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Toast ── -->
+  <div id="toast-container"></div>
+
+  <!-- ── Audio ── -->
+  <audio id="bgm" loop autoplay preload="auto"></audio>
+
+  <script src="themes/themes.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>

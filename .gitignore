@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.env
+venv/
+env/
+ENV/
+
+# Build & Packaging Artifacts
+build/
+*.AppImage
+*.tmp
+*.bak
+*.aria2
+
+# Heavy downloadable mod/game assets (downloaded dynamically by launcher)
+paks/WuWaVH_99_P.pak
+frontend/assets/*.tmp
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
