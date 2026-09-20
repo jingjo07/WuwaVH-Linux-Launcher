@@ -1,81 +1,122 @@
-# ✦ WuWaVH Launcher for Linux ✦
+<div align="center">
 
-> Trình khởi chạy và cài đặt bản dịch Việt Hóa Wuthering Waves trên Linux với giao diện Cyber/Modern/Classic, bộ tải siêu tốc Aria2c đa luồng và công cụ tối ưu đồ họa (Engine.ini).
+  <img src="wuwavh.png" alt="WuWaVH Logo" width="120" style="border-radius: 20px;" />
 
-[![Platform](https://img.shields.io/badge/Platform-Linux%20(Steam%20%7C%20Heroic)-blue.svg)](#)
-[![Python](https://img.shields.io/badge/Python-3.10%2B-green.svg)](#)
-[![GUI](https://img.shields.io/badge/GUI-WebKitGTK%20%2F%20HTML5%20%2F%20PyQt-orange.svg)](#)
+# WuwaVH Linux Launcher
 
----
+Launcher Việt Hóa Wuthering Waves trên Linux (Steam / Heroic).
 
-## 🌟 Tính Năng Nổi Bật
+  <p align="center">
+    <a href="https://github.com/jingjo07/WuwaVH-Linux-Launcher/releases"><img src="https://img.shields.io/github/v/release/jingjo07/WuwaVH-Linux-Launcher?color=38bdf8&label=Release&style=flat-square" alt="Release"></a>
+    <a href="https://discord.com/invite/uNRyaHJR6"><img src="https://img.shields.io/badge/Discord-Tham%20gia-5865F2?style=flat-square&logo=discord&logoColor=white" alt="Discord"></a>
+    <a href="#"><img src="https://img.shields.io/badge/Platform-Linux%20%7C%20SteamDeck-6366f1?style=flat-square" alt="Platform"></a>
+    <a href="#"><img src="https://img.shields.io/badge/Python-3.10%2B-10b981?style=flat-square" alt="Python"></a>
+  </p>
 
-- 🚀 **Tải Việt Hóa Siêu Tốc (Aria2c Multi-Stream Engine)**:
-  - Tích hợp động cơ C++ **Aria2** với 16 kết nối song song, phá bỏ giới hạn bóp băng thông của Cloudflare CDN.
-  - Cơ chế **Piece-Splitting (1MB)** triệt tiêu hiện tượng sụt giảm tốc độ ở cuối file (tail latency).
-  - Cơ chế **Dự phòng (Dynamic Chunk Work-Stealing)** bằng Python thuần nếu máy chưa có Aria2c.
+  <br>
 
-- 🎨 **Giao Diện Đa Theme (Cyber / Modern / Classic)**:
-  - Hiệu ứng kính mờ (Glassmorphism), Cyberpunk HUD, video nền loop mượt mà và nhạc nền tự động phát.
-  - Giữ nhạc và video phát liên tục ngay cả khi chuyển cửa sổ hoặc làm việc khác.
-  - Tự động tạm dừng media khi vào game để không ảnh hưởng đến âm thanh trong trò chơi.
+  <img src="DEV.png" alt="WuWaVH Launcher Preview" width="800" style="border-radius: 10px;" />
 
-- ⚡ **Tối Ưu Hiệu Năng Đồ Họa (Performance Tweaker)**:
-  - 6 Cấu hình đồ họa chuyên sâu được tinh chỉnh cho Linux / Proton (`Potato`, `Balanced`, `High`, `Ultra`, `Cyber`,...).
-  - Tinh chỉnh trực tiếp file `Engine.ini` (Khóa FPS 30/60/90/120, độ phân giải, khử răng cưa, tắt Motion Blur / Hậu kỳ).
-  - Tự động sao lưu và khôi phục cài đặt gốc chỉ với 1 click.
-
-- 🔤 **Tùy Biến Font Chữ Trong Game (Font Packer)**:
-  - Chuyển đổi và đóng gói trực tiếp các font TrueType (`.ttf`) / OpenType (`.otf`) hoặc file `.pak` thành tệp PAK v12 chuẩn cho Unreal Engine 4.
-  - Khôi phục font chữ mặc định của game bất cứ lúc nào.
-
-- 🎮 **Tương Thích Linux Toàn Diện**:
-  - Hỗ trợ cả **Steam** (Proton) và **Heroic Games Launcher** (DXVK, VKD3D, Wine Overrides).
-  - Tùy chọn kích hoạt chế độ **DirectX 11** (`-dx11`) và biến môi trường C#.
-  - Tự động cấu hình `WINEDLLOVERRIDES="winhttp=n,b"` để nạp mod Việt Hóa an toàn.
+</div>
 
 ---
 
-## 📦 Hướng Dẫn Cài Đặt & Khởi Chạy
+## 📌 Tính năng chính
 
-### Cách 1: Chạy trực tiếp từ AppImage (Khuyên dùng)
-Tải file `WuWaVH-Launcher-x86_64.AppImage` từ mục [Releases](https://github.com/jingjo07/WuwaVH-Linux-Launcher/releases):
+- **Tải và cài đặt Việt Hóa**: Tự động tải bản dịch mới nhất từ DangDev (Iris Team)
+- **Tùy chỉnh giao diện**: Hỗ trợ 3 giao diện (Cyber, Modern, Classic), kèm video và nhạc nền tùy chọn.
+- **Chỉnh cấu hình đồ họa (Engine.ini)**:
+  - Chọn sẵn một số preset cấu hình. (Nguồn: [AlteriaX](https://github.com/AlteriaX/WuWa-Configs))
+  - Có nút khôi phục lại file gốc nếu gặp lỗi.
+- **Đổi font chữ trong game**: Hỗ trợ nạp file font `.ttf`, `.otf` hoặc file `.pak` có sẵn để đổi font chữ hiển thị trong game.
+- **Hỗ trợ Steam & Heroic**: Tự nhận diện đường dẫn cài đặt game và hỗ trợ nạp cấu hình `WINEDLLOVERRIDES` trên Wine/Proton.
+
+---
+
+## 📥 Cách cài đặt và sử dụng
+
+### 1. Dùng file AppImage (Khuyên dùng)
+
+Tải file chạy trực tiếp ở mục [Releases](https://github.com/jingjo07/WuwaVH-Linux-Launcher/releases):
+
 ```bash
 chmod +x WuWaVH-Launcher-x86_64.AppImage
 ./WuWaVH-Launcher-x86_64.AppImage
 ```
 
-### Cách 2: Chạy trực tiếp từ mã nguồn
-Cần cài đặt Python 3, WebKit2GTK và Aria2 trên hệ điều hành của bạn:
+### 2. Chạy từ mã nguồn
 
-**Trên Arch Linux / CachyOS / Manjaro:**
-```bash
-sudo pacman -S python webkit2gtk-4.1 aria2
-```
+Nếu muốn chạy trực tiếp bằng Python, máy cần cài sẵn Python 3, WebKit2GTK và Aria2:
 
-**Trên Ubuntu / Debian:**
-```bash
-sudo apt install python3 python3-gi gir1.2-webkit2-4.1 aria2
-```
+- **Arch Linux / CachyOS / Manjaro**:
+  ```bash
+  sudo pacman -S python webkit2gtk-4.1 aria2
+  ```
+- **Ubuntu / Debian**:
+  ```bash
+  sudo apt install python3 python3-gi gir1.2-webkit2-4.1 aria2
+  ```
+- **Fedora**:
+  ```bash
+  sudo dnf install python3 python3-gobject webkit2gtk4.1 aria2
+  ```
 
-**Khởi chạy launcher:**
+Sau đó clone repo và khởi chạy:
+
 ```bash
+git clone https://github.com/jingjo07/WuwaVH-Linux-Launcher.git
+cd WuwaVH-Linux-Launcher
 python3 launcher.py
 ```
 
 ---
 
-## 🛠️ Tự Đóng Gói AppImage
+## ⚙️ Thiết lập trên Steam
 
-Dự án đã tích hợp sẵn script đóng gói tự động bao gồm toàn bộ binary và thư viện phụ thuộc:
+Để Proton nạp file `winhttp.dll` và nhận bản Việt Hóa khi mở game từ Steam:
+
+### 1. Gắn WINEDLLOVERRIDES bằng launcher.
+
+1. Tắt hoàn toàn Steam (Nếu đang bật).
+2. Bấm vào nút (≡) -> Cài WINEDLLOVERDRIVES.
+
+- Lúc này launcher sẽ tự động cài cho bạn WINEDLLOVERDRIVES, bạn đã có thể vào game chơi như bình thường.
+
+### 2. Gắn WINEDLLOVERRIDES trực tiếp trên steam.
+
+1. Chuột phải vào **Wuthering Waves** trong thư viện Steam ➔ Chọn **Properties...**
+2. Ở tab **General**, tìm phần **Launch Options** và điền:
+   ```text
+   WINEDLLOVERRIDES="winhttp=n,b" %command%
+   ```
+   _(Nếu muốn chạy ở chế độ DirectX 11, thêm `-dx11` vào cuối: `WINEDLLOVERRIDES="winhttp=n,b" %command% -dx11`)_.
+
+---
+
+## 🔨 Đóng gói file AppImage
+
+Nếu bạn muốn tự build lại file `.AppImage`:
+
 ```bash
 chmod +x build_appimage.sh
 ./build_appimage.sh
 ```
-File thực thi cuối cùng sẽ xuất hiện tại thư mục gốc: `WuWaVH-Launcher-x86_64.AppImage`.
+
+File đóng gói sẽ được tạo ra tại thư mục hiện tại: `WuWaVH-Launcher-x86_64.AppImage`.
 
 ---
 
-## 📄 Bản Quyền & Lời Cảm Ơn
-- Dự án phát triển phục vụ cộng đồng game thủ Wuthering Waves trên Linux.
-- Dữ liệu bản dịch Việt Hóa từ cộng đồng DangDevVH.
+## 💬 Cộng đồng & Hỗ trợ
+
+Tham gia máy chủ Discord để cùng thảo luận, cập nhật thông tin về Việt Hóa WUWA và những game khác:  
+👉 **[Tham gia máy chủ Discord IRIS](https://discord.com/invite/uNRyaHJR6)**
+
+---
+
+## 🤝 Nguồn Việt Hóa
+
+- Dữ liệu bản dịch Việt Hóa từ **DangDevVH**.
+
+## ⚠️ Lưu Ý
+
+- Tôi không thuộc team Việt Hóa IRIS Team, nên nếu Launcher có vấn đề hãy trực tiếp báo lỗi trên Issues.
