@@ -76,9 +76,9 @@ python3 launcher.py
 ### 1. Gắn WINEDLLOVERRIDES bằng launcher.
 
 1. Tắt hoàn toàn Steam (Nếu đang bật).
-2. Bấm vào nút (≡) -> Cài WINEDLLOVERDRIVES.
+2. Bấm vào nút `≡` -> `Cài WINEDLLOVERDRIVES`.
 
-- Lúc này launcher sẽ tự động cài cho bạn WINEDLLOVERDRIVES, bạn đã có thể vào game chơi như bình thường.
+_(Lúc này launcher sẽ tự động cài cho bạn `WINEDLLOVERDRIVES`, bạn đã có thể vào game chơi như bình thường)_.
 
 ### 2. Gắn WINEDLLOVERRIDES trực tiếp trên steam.
 
