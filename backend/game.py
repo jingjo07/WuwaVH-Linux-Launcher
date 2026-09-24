@@ -2,6 +2,7 @@
 Game process management for WuWaVH Launcher
 """
 import os, subprocess, json, glob, shutil, time, re
+from backend.version import LAUNCHER_VERSION
 try:
     import psutil
     HAS_PSUTIL = True
@@ -74,8 +75,10 @@ def _invalidate_config_cache():
 
 def save_config(cfg: dict):
     os.makedirs(os.path.dirname(CONFIG_PATH), exist_ok=True)
-    with open(CONFIG_PATH, "w") as f:
+    temp_path = CONFIG_PATH + ".tmp"
+    with open(temp_path, "w", encoding="utf-8") as f:
         json.dump(cfg, f, indent=2)
+    os.replace(temp_path, CONFIG_PATH)
     _invalidate_config_cache()
 
 def detect_game_path() -> str | None:
@@ -100,17 +103,27 @@ def _detect_game_path_uncached() -> str | None:
         if os.path.isdir(expanded):
             return expanded
 
-    # Try Steam library folders
-    steam_lib_file = os.path.expanduser("~/.steam/steam/steamapps/libraryfolders.vdf")
-    if os.path.exists(steam_lib_file):
-        with open(steam_lib_file) as f:
-            content = f.read()
-        for line in content.splitlines():
-            if '"path"' in line:
-                path = line.split('"')[-2]
-                candidate = os.path.join(path, "steamapps", "common", "Wuthering Waves")
+    # Try Steam library folders (native & Flatpak)
+    steam_lib_files = [
+        "~/.steam/steam/steamapps/libraryfolders.vdf",
+        "~/.local/share/Steam/steamapps/libraryfolders.vdf",
+        "~/.var/app/com.valvesoftware.Steam/.local/share/Steam/steamapps/libraryfolders.vdf",
+        "~/.var/app/com.valvesoftware.Steam/.steam/steam/steamapps/libraryfolders.vdf",
+    ]
+    for lib_file in steam_lib_files:
+        exp_file = os.path.expanduser(lib_file)
+        if not os.path.isfile(exp_file):
+            continue
+        try:
+            with open(exp_file, "r", encoding="utf-8", errors="ignore") as f:
+                content = f.read()
+            for m in re.finditer(r'"path"\s*"([^"]+)"', content):
+                lib_path = m.group(1).replace("\\\\", "/")
+                candidate = os.path.join(lib_path, "steamapps", "common", "Wuthering Waves")
                 if os.path.isdir(candidate):
                     return candidate
+        except Exception:
+            pass
     return None
 
 def set_game_path(path: str):
@@ -172,7 +185,7 @@ def is_game_running() -> bool:
 
     if HAS_PSUTIL:
         try:
-            for p in psutil.process_iter(["name", "cmdline", "status"]):
+            for p in psutil.process_iter(["name", "status"]):
                 try:
                     # 1. Bỏ qua tiến trình đã chết / zombie
                     status = p.info.get("status")
@@ -183,15 +196,14 @@ def is_game_running() -> bool:
                     if pname in IGNORED_PROCESS_NAMES:
                         continue
 
-                    cmdline_list = p.info.get("cmdline") or []
-                    pcmd = " ".join(cmdline_list).lower()
-
                     # 2. Khớp trực tiếp tên tiến trình game
                     if pname in GAME_NAMES:
                         return True
 
-                    # 3. Nếu là tiến trình Wine/Proton runner, kiểm tra exe trong cmdline
+                    # 3. Nếu là tiến trình Wine/Proton runner, chỉ khi đó mới kiểm tra cmdline
                     if pname in WINE_PRELOADERS:
+                        cmdline_list = p.cmdline() if callable(getattr(p, "cmdline", None)) else []
+                        pcmd = " ".join(cmdline_list).lower()
                         if any(gn in pcmd for gn in ["client-win64-shipping", "wutheringwaves"]):
                             return True
 
@@ -215,68 +227,127 @@ def is_game_running() -> bool:
 
 STEAM_APP_ID = "3513350"
 
-# ── Proton / Steam helpers (reserved for future Proton direct-launch) ────────
-# Các hàm dưới đây được giữ lại để sau này hỗ trợ chạy game trực tiếp qua
-# Proton mà không cần Steam GUI. Hiện tại launch_game() dùng steam -applaunch.
+# ── Proton / Steam Helpers ───────────────────────────────────────────────────
+# Tự động quét và phát hiện các bản Proton (DW-Proton, GE-Proton, Proton Experimental...)
+# Hỗ trợ cả Native Steam và Flatpak Steam.
 
-COMPAT_TOOL_NAME = "dwproton-11.0-4-x86_64"
-
-# Nơi Steam lưu custom Proton (GE-Proton, dwproton, ...)
 COMPAT_TOOLS_DIRS = [
     "~/.local/share/Steam/compatibilitytools.d",
     "~/.steam/steam/compatibilitytools.d",
+    "~/.steam/root/compatibilitytools.d",
+    "~/.var/app/com.valvesoftware.Steam/.local/share/Steam/compatibilitytools.d",
+    "~/.var/app/com.valvesoftware.Steam/data/Steam/compatibilitytools.d",
 ]
 
-# Proton cài sẵn trong steamapps (key = tên thư mục, value = tên hiển thị)
 BUILTIN_PROTON_DIRS = [
     "~/.local/share/Steam/steamapps/common",
     "~/.steam/steam/steamapps/common",
+    "~/.steam/root/steamapps/common",
+    "~/.var/app/com.valvesoftware.Steam/.local/share/Steam/steamapps/common",
 ]
 
 
-def _find_proton_script() -> str | None:
+def find_available_protons() -> list[dict]:
     """
-    Tìm đường dẫn tới script 'proton' dựa trên COMPAT_TOOL_NAME.
-    Trả về path tới file 'proton' hoặc None nếu không tìm thấy.
+    Tự động quét và xếp hạng mọi phiên bản Proton có sẵn trên hệ thống.
+    Thứ tự ưu tiên: DW-Proton > GE-Proton > Proton Experimental > Proton 9.0+ > Proton khác.
     """
-    tool_variants = [
-        COMPAT_TOOL_NAME,
-        COMPAT_TOOL_NAME.replace("-x86_64", ""),
-        COMPAT_TOOL_NAME.replace("-amd64", ""),
-    ]
+    protons = []
+    seen_real_paths = set()
 
+    def _rank_proton(name: str) -> int:
+        nl = name.lower()
+        if "dw-proton" in nl or "dwproton" in nl:
+            return 100
+        if "proton-ge" in nl or "ge-proton" in nl:
+            return 90
+        if "experimental" in nl:
+            return 80
+        if "proton 9" in nl or "proton-9" in nl:
+            return 70
+        if "proton 8" in nl or "proton-8" in nl:
+            return 60
+        if "proton" in nl:
+            return 50
+        return 10
+
+    # 1. Custom compatibility tools (GE-Proton, dwproton, ...)
     for base in COMPAT_TOOLS_DIRS:
-        base_exp = os.path.expanduser(base)
-        if not os.path.isdir(base_exp):
+        exp = os.path.expanduser(base)
+        if not os.path.isdir(exp):
             continue
-        for variant in tool_variants:
-            candidate = os.path.join(base_exp, variant, "proton")
-            if os.path.isfile(candidate):
-                return candidate
-
-    for base in BUILTIN_PROTON_DIRS:
-        base_exp = os.path.expanduser(base)
-        if not os.path.isdir(base_exp):
-            continue
-        for variant in tool_variants:
-            candidate = os.path.join(base_exp, variant, "proton")
-            if os.path.isfile(candidate):
-                return candidate
         try:
-            for entry in os.listdir(base_exp):
-                if "proton" in entry.lower():
-                    candidate = os.path.join(base_exp, entry, "proton")
-                    if os.path.isfile(candidate):
-                        return candidate
-        except PermissionError:
+            for entry in os.listdir(exp):
+                candidate_script = os.path.join(exp, entry, "proton")
+                if os.path.isfile(candidate_script):
+                    real = os.path.realpath(candidate_script)
+                    if real not in seen_real_paths:
+                        seen_real_paths.add(real)
+                        protons.append({
+                            "name": entry,
+                            "path": candidate_script,
+                            "type": "custom",
+                            "rank": _rank_proton(entry),
+                        })
+        except Exception:
             pass
 
-    return None
+    # 2. Builtin / Steam official Proton
+    for base in BUILTIN_PROTON_DIRS:
+        exp = os.path.expanduser(base)
+        if not os.path.isdir(exp):
+            continue
+        try:
+            for entry in os.listdir(exp):
+                if "proton" in entry.lower():
+                    candidate_script = os.path.join(exp, entry, "proton")
+                    if os.path.isfile(candidate_script):
+                        real = os.path.realpath(candidate_script)
+                        if real not in seen_real_paths:
+                            seen_real_paths.add(real)
+                            protons.append({
+                                "name": entry,
+                                "path": candidate_script,
+                                "type": "steam",
+                                "rank": _rank_proton(entry),
+                            })
+        except Exception:
+            pass
+
+    protons.sort(key=lambda x: x["rank"], reverse=True)
+    return protons
+
+
+def get_best_proton() -> dict | None:
+    """Trả về bản Proton tối ưu nhất tìm được trên máy."""
+    protons = find_available_protons()
+    return protons[0] if protons else None
+
+
+def _find_proton_script(tool_name: str | None = None) -> str | None:
+    """
+    Tìm đường dẫn tới script 'proton'.
+    Nếu tool_name được truyền, tìm phiên bản tương ứng;
+    nếu không, tự động lấy bản Proton tối ưu nhất có sẵn.
+    """
+    if tool_name:
+        for p in find_available_protons():
+            if tool_name.lower() in p["name"].lower():
+                return p["path"]
+
+    best = get_best_proton()
+    return best["path"] if best else None
 
 
 def _find_steam_root() -> str | None:
-    """Tìm thư mục gốc cài đặt Steam."""
-    for c in ["~/.local/share/Steam", "~/.steam/steam", "~/.steam/root"]:
+    """Tìm thư mục gốc cài đặt Steam (hỗ trợ Native & Flatpak)."""
+    for c in [
+        "~/.local/share/Steam",
+        "~/.steam/steam",
+        "~/.steam/root",
+        "~/.var/app/com.valvesoftware.Steam/.local/share/Steam",
+        "~/.var/app/com.valvesoftware.Steam/data/Steam",
+    ]:
         exp = os.path.expanduser(c)
         if os.path.isdir(exp):
             return exp
@@ -284,10 +355,11 @@ def _find_steam_root() -> str | None:
 
 
 def _find_compat_data_path() -> str | None:
-    """Tìm compatdata prefix của game (STEAM_COMPAT_DATA_PATH)."""
+    """Tìm compatdata prefix của game (hỗ trợ Native & Flatpak)."""
     for c in [
         f"~/.local/share/Steam/steamapps/compatdata/{STEAM_APP_ID}",
         f"~/.steam/steam/steamapps/compatdata/{STEAM_APP_ID}",
+        f"~/.var/app/com.valvesoftware.Steam/.local/share/Steam/steamapps/compatdata/{STEAM_APP_ID}",
     ]:
         exp = os.path.expanduser(c)
         if os.path.isdir(exp):
@@ -934,15 +1006,20 @@ def force_kill_game():
     """Force kill all active Wuthering Waves processes and hanging runners."""
     killed = 0
     if HAS_PSUTIL:
-        for p in psutil.process_iter(["name", "cmdline", "pid", "status"]):
+        for p in psutil.process_iter(["name", "pid", "status"]):
             try:
                 pname = (p.info.get("name") or "").lower()
-                cmdline = " ".join(p.info.get("cmdline") or []).lower()
-                
+                is_candidate = any(k in pname for k in ("client-win64-shipping", "client-win64-sh", "wutheringwaves", "wine", "proton"))
+                if not is_candidate:
+                    continue
+
+                cmdline_list = p.cmdline() if callable(getattr(p, "cmdline", None)) else []
+                cmdline = " ".join(cmdline_list).lower()
+
                 # Bỏ qua launcher chính
                 if "launcher.py" in cmdline or "dangdevvh" in cmdline:
                     continue
-                    
+
                 if any(k in pname or k in cmdline for k in ["client-win64-shipping", "client-win64-sh", "wutheringwaves"]):
                     try:
                         p.kill()
@@ -1114,7 +1191,7 @@ def get_status() -> dict:
         "installed_vh":   len(installed_paks) > 0 or bool(get_vh_version()),
         "has_game":       game_path is not None,
         "vh_version":     get_vh_version(),
-        "launcher_version": "1.0",
+        "launcher_version": LAUNCHER_VERSION,
         "font_status":    get_font_status(),
         "launcher_info":  get_launcher_info(),
         "theme":          get_theme(),

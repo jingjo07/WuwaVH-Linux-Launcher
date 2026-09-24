@@ -24,7 +24,7 @@ BUNDLED_ASSETS_DIR = os.path.join(FRONTEND_DIR, "assets")
 USER_ASSETS_DIR    = os.path.expanduser("~/.config/wuwavh/assets")
 
 sys.path.insert(0, BASE_DIR)
-from backend import downloader, game, performance
+from backend import downloader, game, performance, version
 
 PAK_DIR = game.get_paks_dir()
 
@@ -475,7 +475,7 @@ class LauncherWindow(Gtk.Window):
         self.set_default_size(self.WIN_W, self.WIN_H)
         self.set_position(Gtk.WindowPosition.CENTER)
         self.set_resizable(False)
-        self.set_title("WuWaVH Launcher")
+        self.set_title(f"WuWaVH Launcher v{version.LAUNCHER_VERSION}")
 
         # Set App Window Icon from frontend/assets/icon.png
         icon_path = os.path.join(ASSETS_DIR, "icon.png")

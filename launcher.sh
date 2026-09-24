@@ -41,7 +41,7 @@ PROXY_BOX="WuwaVH"
 STEAM_APP_ID="3513350"
 GAME_EXE_NAME="Client-Win64-Shipping.exe"
 PAK_SUBPATH="Client/Binaries/Win64/wuwaVietHoa"
-LAUNCHER_VERSION="1.0"
+LAUNCHER_VERSION=$(python3 -c "import sys; sys.path.insert(0, '$SCRIPT_DIR'); from backend.version import LAUNCHER_VERSION; print(LAUNCHER_VERSION)" 2>/dev/null || echo "1.1")
 
 # ── HMAC Key bytes (XOR of DATA ⊕ MASK, identical to Python) ──────────────────
 MASK_BYTES=(58 31 171 83 16 88 50 84 75 123 181 53 137 203 233 194 199 235 87 167 183 153 83 52 249 235 113 178 112 23 153 201)

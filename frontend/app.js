@@ -112,6 +112,24 @@ function updateVhVersionUI() {
   if (vhCyber) vhCyber.textContent = text;
 }
 
+function updateLauncherVersionUI(ver) {
+  if (!ver) return;
+  const verStr = ver.startsWith("v") ? ver : `v${ver}`;
+
+  const cyberVer = document.querySelector(".cyber-launcher-ver");
+  if (cyberVer) cyberVer.textContent = verStr;
+
+  const cyberTag = document.querySelector(".cyber-launcher-ver-tag");
+  if (cyberTag) cyberTag.textContent = verStr;
+
+  const drawerSub = document.querySelector(".drawer-sub-title");
+  if (drawerSub) drawerSub.textContent = `VIETNAMESE LAUNCHER ${verStr}`;
+
+  document.querySelectorAll(".launcher-ver-lbl").forEach(el => {
+    el.textContent = `Launcher ${verStr}`;
+  });
+}
+
 async function loadVersion() {
   try {
     const info = await ipc("get_version");
@@ -241,6 +259,9 @@ async function refreshStatus() {
     updatePlayBtn();
     updateLauncherBadge();
     updateVhVersionUI();
+    if (gameStatus.launcher_version) {
+      updateLauncherVersionUI(gameStatus.launcher_version);
+    }
 
     // Auto-pause background video when game is actively running
     if (gameStatus.game_running) {
