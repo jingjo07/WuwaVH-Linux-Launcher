@@ -525,11 +525,15 @@ body.theme-cyber .wctrl.close:hover {
   position: absolute;
   top: -1px;
   left: -1px;
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
   border-top: 2px solid var(--cyan);
   border-left: 2px solid var(--cyan);
-  box-shadow: -2px -2px 10px rgba(255, 26, 83, 0.5);
+  border-top-left-radius: 6px;
+  background: transparent !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 0 4px var(--cyan));
+  pointer-events: none;
   z-index: 5;
 }
 
@@ -538,11 +542,15 @@ body.theme-cyber .wctrl.close:hover {
   position: absolute;
   bottom: -1px;
   right: -1px;
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
   border-bottom: 2px solid var(--magenta);
   border-right: 2px solid var(--magenta);
-  box-shadow: 2px 2px 10px rgba(255, 77, 109, 0.5);
+  border-bottom-right-radius: 6px;
+  background: transparent !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 0 4px var(--magenta));
+  pointer-events: none;
   z-index: 5;
 }
 
