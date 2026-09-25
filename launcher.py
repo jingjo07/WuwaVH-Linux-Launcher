@@ -523,11 +523,20 @@ class LauncherWindow(Gtk.Window):
             WebKit2.HardwareAccelerationPolicy.ON_DEMAND
         )
 
+        # Ensure frontend/version.js is synchronized with version.py
+        try:
+            v_js_path = os.path.join(FRONTEND_DIR, "version.js")
+            with open(v_js_path, "w", encoding="utf-8") as vf:
+                vf.write(f'// Auto-generated from backend/version.py\nwindow.LAUNCHER_VERSION = "{version.LAUNCHER_VERSION}";\n')
+        except Exception as e:
+            print(f"[Version sync warning] {e}")
+
         # Inject global vars before page load
         inject_script = WebKit2.UserScript(
             f"""
             window.ASSETS_DIR = "file://{ASSETS_DIR}";
             window.PAK_DIR    = "{PAK_DIR}";
+            window.LAUNCHER_VERSION = "{version.LAUNCHER_VERSION}";
             """,
             WebKit2.UserContentInjectedFrames.ALL_FRAMES,
             WebKit2.UserScriptInjectionTime.START,

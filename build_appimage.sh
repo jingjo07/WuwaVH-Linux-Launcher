@@ -26,6 +26,9 @@ mkdir -p "$APP_DIR/usr/share/icons/hicolor/256x256/apps"
 
 # 2. Copy source code và tài nguyên
 echo "[2/4] Sao chép mã nguồn và tài nguyên..."
+echo "// Auto-generated from backend/version.py" > "$SCRIPT_DIR/frontend/version.js"
+echo "window.LAUNCHER_VERSION = \"$LAUNCHER_VERSION\";" >> "$SCRIPT_DIR/frontend/version.js"
+
 cp -r "$SCRIPT_DIR/backend" "$APP_DIR/"
 cp -r "$SCRIPT_DIR/frontend" "$APP_DIR/"
 cp "$SCRIPT_DIR/launcher.py" "$APP_DIR/"

@@ -113,21 +113,38 @@ function updateVhVersionUI() {
 }
 
 function updateLauncherVersionUI(ver) {
-  if (!ver) return;
-  const verStr = ver.startsWith("v") ? ver : `v${ver}`;
+  const v = ver || (typeof window !== "undefined" ? window.LAUNCHER_VERSION : null);
+  if (!v) return;
+  const cleanVer = String(v).trim().replace(/^v+/i, "");
+  const verStr = `v${cleanVer}`;
 
-  const cyberVer = document.querySelector(".cyber-launcher-ver");
-  if (cyberVer) cyberVer.textContent = verStr;
+  // 1. Cyber Theme: topbar badge and bottom-right tag
+  document.querySelectorAll(".cyber-launcher-ver, .cyber-launcher-ver-tag").forEach(el => {
+    el.textContent = verStr;
+  });
 
-  const cyberTag = document.querySelector(".cyber-launcher-ver-tag");
-  if (cyberTag) cyberTag.textContent = verStr;
+  // 2. Drawer subtitle across all themes
+  document.querySelectorAll(".drawer-sub-title").forEach(el => {
+    el.textContent = `VIETNAMESE LAUNCHER ${verStr}`;
+  });
 
-  const drawerSub = document.querySelector(".drawer-sub-title");
-  if (drawerSub) drawerSub.textContent = `VIETNAMESE LAUNCHER ${verStr}`;
-
+  // 3. Classic and Modern Themes: footer labels
   document.querySelectorAll(".launcher-ver-lbl").forEach(el => {
     el.textContent = `Launcher ${verStr}`;
   });
+
+  // 4. Generic data attribute targets
+  document.querySelectorAll("[data-launcher-ver]").forEach(el => {
+    el.textContent = verStr;
+  });
+  document.querySelectorAll("[data-launcher-ver-lbl]").forEach(el => {
+    el.textContent = `Launcher ${verStr}`;
+  });
+}
+
+// Immediate initial sync from window.LAUNCHER_VERSION (injected via WebKit or version.js)
+if (typeof window !== "undefined" && window.LAUNCHER_VERSION) {
+  updateLauncherVersionUI(window.LAUNCHER_VERSION);
 }
 
 async function loadVersion() {
@@ -1935,6 +1952,9 @@ async function init() {
   updateVolSlider(savedVol, false);
 
   initBgMedia();
+  if (typeof window !== "undefined" && window.LAUNCHER_VERSION) {
+    updateLauncherVersionUI(window.LAUNCHER_VERSION);
+  }
   await Promise.allSettled([loadVersion(), refreshStatus()]);
 
   if (gameStatus && gameStatus.theme && gameStatus.theme !== currentThemeId) {
