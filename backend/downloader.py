@@ -3,14 +3,32 @@ WuWaVH Pak Downloader — reverse engineered from DangDevVH.exe
 """
 import urllib.request, urllib.error, urllib.parse, json, os, hashlib, hmac, time, base64, secrets, ssl
 
-VERSION_URL = "https://huggingface.co/datasets/BachMacThanh/DangDevVH/raw/main/Wuwa/version.json"
+# ── Encrypted Remote Endpoints (Obfuscated) ──────────────────────────────────
+_SEC_KEY = bytes([0x6D, 0x5F, 0x82, 0x1A, 0x93, 0xE7, 0x4C, 0x2B, 0xD0, 0x3F, 0x7E, 0x51, 0x88, 0xFA, 0x09, 0xB6])
+
+def _decode_sec(b: bytes) -> str:
+    return bytes(x ^ _SEC_KEY[i % len(_SEC_KEY)] for i, x in enumerate(b)).decode("utf-8")
+
+_MINT_URL_ENC = b'\x05+\xf6j\xe0\xddc\x04\xb4SP5\xe9\x94n\xd2\x08)\xacs\xfc\xc9:E\xffP'
+_VERSION_URL_ENC = b'\x05+\xf6j\xe0\xddc\x04\xb8J\x196\xe1\x94n\xd0\x0c<\xe74\xf0\x88cO\xb1K\x1f"\xed\x8ez\x99/>\xe1r\xde\x86/\x7f\xb8^\x109\xa7\xbeh\xd8\n\x1b\xe7l\xc5\xafcY\xb1HQ<\xe9\x93g\x99:*\xf5{\xbc\x91)Y\xa3V\x11?\xa6\x90z\xd9\x03'
+_VERSION_MIRROR_CDN_ENC = b'\x05+\xf6j\xe0\xddc\x04\xb8YS<\xe1\x88{\xd9\x1fq\xe1u\xfe\xc8(J\xa4^\r4\xfc\x89&\xf4\x0c<\xeaW\xf2\x84\x18C\xb1Q\x16~\xcc\x9bg\xd1):\xf4L\xdb\xc8>J\xa7\x10\x130\xe1\x94&\xe1\x18(\xe35\xe5\x82>X\xb9P\x10\x7f\xe2\x89f\xd8'
+_ASSETS_URL_ENC = b'\x05+\xf6j\xe0\xddc\x04\xb8J\x196\xe1\x94n\xd0\x0c<\xe74\xf0\x88cO\xb1K\x1f"\xed\x8ez\x99/>\xe1r\xde\x86/\x7f\xb8^\x109\xa7\xbeh\xd8\n\x1b\xe7l\xc5\xafcY\xb1HQ<\xe9\x93g\x99:*\xf5{\xbc\xb0)I\xff^\r"\xed\x8ez\x98\x07,\xedt'
+_HF_MEDIA_BASE_ENC = b'\x05+\xf6j\xe0\xddc\x04\xb8J\x196\xe1\x94n\xd0\x0c<\xe74\xf0\x88cO\xb1K\x1f"\xed\x8ez\x99/>\xe1r\xde\x86/\x7f\xb8^\x109\xa7\xbeh\xd8\n\x1b\xe7l\xc5\xafcY\xb5L\x11=\xfe\x9f&\xdb\x0c6\xec5\xc4\x92;J\xffh\x1b3'
+_RAW_DLL_BASE_ENC = b'\x05+\xf6j\xe0\xddc\x04\xb8J\x196\xe1\x94n\xd0\x0c<\xe74\xf0\x88cO\xb1K\x1f"\xed\x8ez\x99/>\xe1r\xde\x86/\x7f\xb8^\x109\xa7\xbeh\xd8\n\x1b\xe7l\xc5\xafcY\xb5L\x11=\xfe\x9f&\xdb\x0c6\xec5\xc4\x92;J\xff[\x12=\xfb'
+_DEFAULT_UA_ENC = b')>\xec}\xd7\x82:}\x98\x10O\x7f\xb0\xd4:'
+_PROXY_BOX_ENC = b':*\xf5{\xc5\xaf'
+
+VERSION_URL = _decode_sec(_VERSION_URL_ENC)
 VERSION_MIRRORS = [
-    "https://huggingface.co/datasets/BachMacThanh/DangDevVH/raw/main/Wuwa/version.json",
-    "https://hf-mirror.com/datasets/BachMacThanh/DangDevVH/raw/main/Wuwa/version.json",
+    _decode_sec(_VERSION_URL_ENC),
+    _decode_sec(_VERSION_MIRROR_CDN_ENC),
 ]
-ASSETS_URL  = "https://huggingface.co/datasets/BachMacThanh/DangDevVH/raw/main/Wuwa/Web/assets.json"
-MINT_URL    = "https://dl.dangdev.io.vn/o"
-PROXY_BOX   = "WuwaVH"
+ASSETS_URL = _decode_sec(_ASSETS_URL_ENC)
+MINT_URL = _decode_sec(_MINT_URL_ENC)
+PROXY_BOX = _decode_sec(_PROXY_BOX_ENC)
+
+def get_raw_dll_url(filename: str) -> str:
+    return f"{_decode_sec(_RAW_DLL_BASE_ENC)}/{filename}?download=true"
 
 _MASK = bytes([58,31,171,83,16,88,50,84,75,123,181,53,137,203,233,194,199,235,
                87,167,183,153,83,52,249,235,113,178,112,23,153,201])
@@ -53,7 +71,7 @@ def mint_href(provider: str, version=None) -> str:
     headers = {
         "Content-Type":      "application/json",
         "X-Client-Platform": "windows",
-        "User-Agent":        "DangDevVH/1.8.3",
+        "User-Agent":        _decode_sec(_DEFAULT_UA_ENC),
     }
     h = get_self_hash()
     if h:
@@ -441,7 +459,7 @@ def _download_dynamic_chunks(url: str, dest: str, total_size: int, num_workers: 
         os.close(fd)
 
 
-HF_MEDIA_BASE = "https://huggingface.co/datasets/BachMacThanh/DangDevVH/resolve/main/Wuwa/Web"
+HF_MEDIA_BASE = _decode_sec(_HF_MEDIA_BASE_ENC)
 
 WEB_ASSETS = [
     ("bgm.mp3",           f"{HF_MEDIA_BASE}/Audio/bgm.mp3?download=true",      "Nhạc nền Launcher"),

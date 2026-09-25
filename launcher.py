@@ -330,7 +330,7 @@ class IPC:
                 })
 
                 if provider == "raw":
-                    href = f"https://huggingface.co/datasets/BachMacThanh/DangDevVH/resolve/main/Wuwa/dlls/{filename}?download=true"
+                    href = downloader.get_raw_dll_url(filename)
                 else:
                     href = downloader.mint_href(provider, version)
 

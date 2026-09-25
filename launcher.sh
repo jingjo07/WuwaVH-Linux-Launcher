@@ -35,9 +35,9 @@ if [[ "${1:-}" != "--cli" && "${1:-}" != "--yad" && "${1:-}" != "--zenity" ]]; t
 fi
 
 # ── URLs & Constants ──────────────────────────────────────────────────────────
-VERSION_URL="https://huggingface.co/datasets/BachMacThanh/DangDevVH/raw/main/Wuwa/version.json"
-MINT_URL="https://dl.dangdev.io.vn/o"
-PROXY_BOX="WuwaVH"
+VERSION_URL=$(python3 -c "import sys; sys.path.insert(0, '$SCRIPT_DIR'); from backend.downloader import VERSION_URL; print(VERSION_URL)" 2>/dev/null)
+MINT_URL=$(python3 -c "import sys; sys.path.insert(0, '$SCRIPT_DIR'); from backend.downloader import MINT_URL; print(MINT_URL)" 2>/dev/null)
+PROXY_BOX=$(python3 -c "import sys; sys.path.insert(0, '$SCRIPT_DIR'); from backend.downloader import PROXY_BOX; print(PROXY_BOX)" 2>/dev/null || echo "WuwaVH")
 STEAM_APP_ID="3513350"
 GAME_EXE_NAME="Client-Win64-Shipping.exe"
 PAK_SUBPATH="Client/Binaries/Win64/wuwaVietHoa"
@@ -924,7 +924,7 @@ do_update_vh() {
         local url
 
         if [ "$provider" = "raw" ]; then
-            url="https://huggingface.co/datasets/BachMacThanh/DangDevVH/resolve/main/Wuwa/dlls/${filename}?download=true"
+            url=$(python3 -c "import sys; sys.path.insert(0, '$SCRIPT_DIR'); from backend.downloader import get_raw_dll_url; print(get_raw_dll_url('$filename'))" 2>/dev/null)
         else
             log "Tạo chữ ký bảo mật & liên kết tải: $label..."
             url=$(mint_href "$provider" "$version") || {
