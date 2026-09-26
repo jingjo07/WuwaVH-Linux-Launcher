@@ -70,7 +70,7 @@
         </div>
       </div>
 
-      <button class="topbar-btn modern-only" id="btn-game-files" title="Mở thư mục game">
+      <button class="topbar-btn" id="btn-game-files" title="Mở thư mục game">
         <svg class="theme-svg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
@@ -141,7 +141,8 @@
   </aside>
 
   <!-- ── Modern Left Expandable Drawer Sidebar ── -->
-  <div id="sidebar-drawer" class="modern-only">
+  <div id="modern-drawer-backdrop" class="modern-only" aria-hidden="true"></div>
+  <div id="sidebar-drawer" class="modern-only" aria-label="Điều hướng" aria-hidden="true" inert>
     <div class="drawer-header">
       <div class="drawer-app-info">
         <div class="drawer-avatar">
@@ -163,15 +164,15 @@
 
     <div class="drawer-menu-label">MENU</div>
     <div class="drawer-nav">
-      <div class="drawer-nav-item active" id="drawer-item-home">
+      <button type="button" class="drawer-nav-item active" id="drawer-item-home">
         <span class="drawer-nav-icon">
           <svg class="theme-svg-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
             <polygon points="5 3 19 12 5 21 5 3"></polygon>
           </svg>
         </span>
         <span class="drawer-nav-text">TRANG CHỦ</span>
-      </div>
-      <div class="drawer-nav-item" id="drawer-item-perf">
+      </button>
+      <button type="button" class="drawer-nav-item" id="drawer-item-perf">
         <span class="drawer-nav-icon">
           <svg class="theme-svg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
             stroke-width="2.2">
@@ -181,8 +182,8 @@
           </svg>
         </span>
         <span class="drawer-nav-text">HIỆU NĂNG</span>
-      </div>
-      <div class="drawer-nav-item" id="drawer-item-font">
+      </button>
+      <button type="button" class="drawer-nav-item" id="drawer-item-font">
         <span class="drawer-nav-icon">
           <svg class="theme-svg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
             stroke-width="2.2">
@@ -192,8 +193,8 @@
           </svg>
         </span>
         <span class="drawer-nav-text">FONT TUỲ CHỈNH</span>
-      </div>
-      <div class="drawer-nav-item" id="drawer-item-theme">
+      </button>
+      <button type="button" class="drawer-nav-item" id="drawer-item-theme">
         <span class="drawer-nav-icon">
           <svg class="theme-svg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
             stroke-width="2">
@@ -203,7 +204,7 @@
           </svg>
         </span>
         <span class="drawer-nav-text">GIAO DIỆN (THEME)</span>
-      </div>
+      </button>
     </div>
 
     <!-- Modern Drawer Music Controls -->
@@ -257,14 +258,6 @@
       </button>
     </div>
 
-    <!-- Bottom Sidebar Shortcut: Game Files -->
-    <div class="cyber-sidebar-nav-group">
-      <button class="sb-icon" id="cyber-nav-files" title="Mở thư mục cài game">
-        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" viewBox="0 0 24 24">
-          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-        </svg>
-      </button>
-    </div>
   </aside>
 
   <!-- ── Bottom Layer (HOME) ── -->
@@ -369,29 +362,48 @@
 
     <!-- ── Modern Home View (Update News Panel + Mint Action Row) ── -->
     <div id="modern-home" class="modern-only">
+      <div class="modern-intro">
+        <div class="modern-status-card">
+          <span class="modern-status-icon" aria-hidden="true">●</span>
+          <div class="modern-status-copy" role="status" aria-live="polite">
+            <strong id="modern-game-status">Đang kiểm tra game...</strong>
+            <span id="modern-game-detail">Vui lòng chờ trong giây lát</span>
+          </div>
+        </div>
+        <button type="button" class="modern-update-link" id="modern-quick-update">
+          <span class="modern-update-icon" aria-hidden="true">↻</span>
+          <span>Cập nhật Việt hóa</span>
+          <span aria-hidden="true">→</span>
+        </button>
+      </div>
       <div class="modern-hero-stack">
+        <div class="modern-panel-heading">
+          <span>BẢNG ĐIỀU KHIỂN</span>
+          <span class="modern-panel-line"></span>
+        </div>
         <!-- Update Info / News Card -->
         <div class="modern-card modern-news-card">
           <div class="modern-news-header">
-            <span class="modern-news-badge" id="ver-tag-modern">v—</span>
-            <span class="modern-news-label">THÔNG BÁO VIỆT HOÁ</span>
+            <span class="modern-news-label">BẢN DỊCH MỚI NHẤT</span>
             <span class="modern-news-date" id="news-date-modern">—</span>
           </div>
+          <div class="modern-news-version"><span id="ver-tag-modern">v—</span><span class="modern-news-version-mark">↗</span></div>
           <div class="modern-news-content" id="news-content-modern">
             Đang tải thông tin phiên bản...
           </div>
         </div>
 
         <!-- Launch Options Bar (DirectX 11 + CSharp Environment) -->
+        <div class="modern-config-heading"><span>THIẾT LẬP KHỞI CHẠY</span><span>Tùy chọn nhanh</span></div>
         <div class="launch-options-bar" id="launch-options-modern">
-          <div class="launch-toggle-card active" id="toggle-dx11-modern"
+          <div class="launch-toggle-card active" id="toggle-dx11-modern" role="switch" tabindex="0" aria-checked="true" aria-label="DirectX 11"
             title="Chạy DirectX 11 (DXVK) ổn định, chống crash Fatal Error trên Linux">
             <div class="toggle-switch-pill">
               <div class="toggle-thumb"></div>
             </div>
             <span class="toggle-label">DirectX 11</span>
           </div>
-          <div class="launch-toggle-card active" id="toggle-csharp-modern"
+          <div class="launch-toggle-card active" id="toggle-csharp-modern" role="switch" tabindex="0" aria-checked="true" aria-label="Môi trường CSharp"
             title="Bật môi trường C# (-ForceEnableCSharpEnvironment)">
             <div class="toggle-switch-pill">
               <div class="toggle-thumb"></div>
@@ -413,12 +425,13 @@
 
         <!-- Modern Action Row -->
         <div class="modern-action-row">
-          <button class="btn-modern-menu" id="btn-menu-toggle-modern" title="Tuỳ chọn">
-            <span>☰</span>
+          <button class="btn-modern-menu" id="btn-menu-toggle-modern" title="Tuỳ chọn nhanh" aria-label="Tuỳ chọn nhanh" aria-expanded="false">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
           </button>
           <button class="btn-modern-play" id="btn-play-modern">
+            <span class="play-icon" aria-hidden="true">▶</span>
             <span class="play-text">CHƠI GAME</span>
-            <span class="play-arrow">&rarr;</span>
+            <span class="play-arrow" aria-hidden="true">&rarr;</span>
           </button>
         </div>
 
@@ -475,14 +488,14 @@
         <!-- Launch Config Card -->
         <div class="cyber-config-card holo-card">
           <div class="cyber-config-label">CẤU HÌNH</div>
-          <div class="cyber-toggle-row active" id="toggle-dx11-cyber" title="Chạy DirectX 11 (DXVK) ổn định, chống crash">
+          <div class="cyber-toggle-row active" id="toggle-dx11-cyber" role="switch" tabindex="0" aria-checked="true" aria-label="DirectX 11" title="Chạy DirectX 11 (DXVK) ổn định, chống crash">
             <span class="cyber-toggle-title">DirectX 11</span>
             <div class="neon-toggle on">
               <div class="knob"></div>
             </div>
           </div>
           <div class="cyber-toggle-divider"></div>
-          <div class="cyber-toggle-row active" id="toggle-csharp-cyber" title="Bật môi trường C# (-ForceEnableCSharpEnvironment)">
+          <div class="cyber-toggle-row active" id="toggle-csharp-cyber" role="switch" tabindex="0" aria-checked="true" aria-label="Môi trường CSharp" title="Bật môi trường C# (-ForceEnableCSharpEnvironment)">
             <span class="cyber-toggle-title">CSharp Mode</span>
             <div class="neon-toggle on">
               <div class="knob"></div>
@@ -508,17 +521,15 @@
         <div class="cyber-action-row">
           <!-- Left Meta -->
           <div class="cyber-meta-group">
-            <div class="cyber-platform-badge" id="launcher-badge-cyber" title="Nhấn để đổi Launcher chạy game">
+            <div class="cyber-platform-badge" id="launcher-badge-cyber" role="button" tabindex="0" title="Nhấn để đổi Launcher chạy game">
               <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.029 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.606 0 11.979 0z"/>
               </svg>
               <span id="launcher-badge-txt-cyber">Steam</span>
             </div>
             <div class="cyber-meta-divider"></div>
-            <div class="cyber-status-text" id="cyber-status-text">
-              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
-              </svg>
+            <div class="cyber-status-text" id="cyber-status-text" role="status" aria-live="polite">
+              <span class="cyber-status-dot" aria-hidden="true"></span>
               <span id="cyber-game-size-label">Sẵn sàng</span>
             </div>
             <div class="cyber-meta-divider"></div>
@@ -526,7 +537,7 @@
           </div>
 
           <!-- Quick Options Menu Button -->
-          <button class="cyber-menu-btn" id="btn-menu-toggle-cyber" title="Tuỳ chọn nhanh">
+          <button class="cyber-menu-btn" id="btn-menu-toggle-cyber" title="Tuỳ chọn nhanh" aria-expanded="false">
             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24">
               <line x1="3" y1="6" x2="21" y2="6" />
               <line x1="3" y1="12" x2="21" y2="12" />
@@ -550,14 +561,6 @@
 
     <!-- ── Context Menu (Shared) ── -->
     <div id="ctx-menu">
-      <div class="ctx-item" id="ctx-folder">
-        <span class="ctx-icon">
-          <svg class="theme-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2">
-            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-          </svg>
-        </span> Thư mục game
-      </div>
       <div class="ctx-item" id="ctx-update">
         <span class="ctx-icon">
           <svg class="theme-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"

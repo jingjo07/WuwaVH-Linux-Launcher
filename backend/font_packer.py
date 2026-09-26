@@ -32,6 +32,35 @@ _SUFFIX_OFF_FONTSIZE   = 115  # u64: font data size reference
 _SUFFIX_OFF_FOOTER_SIG = 442  # Footer starts here (PAK magic 0x5A6F12E1)
 _FOOTER_OFF_INDEX      = 8    # u64 index_offset within footer
 _FOOTER_OFF_SHA1       = 24   # u8[20] index SHA1 within footer
+_MAX_PREVIEW_FONT_SIZE = 20 * 1024 * 1024
+
+
+def read_font_data_from_pak(pak_path: str) -> tuple[bytes, str]:
+    """Read the embedded TTF/OTF used by a font PAK for launcher preview."""
+    with open(pak_path, "rb") as pak:
+        header = pak.read(_ENTRY_RECORD_SIZE + 4)
+        if len(header) < _ENTRY_RECORD_SIZE + 4:
+            raise ValueError("PAK font không hợp lệ")
+
+        compressed_size = struct.unpack_from("<Q", header, 8)[0]
+        font_size = struct.unpack_from("<Q", header, 16)[0]
+        compression_method = struct.unpack_from("<I", header, 24)[0]
+        if (compressed_size != font_size or compression_method != 0 or
+                not 12 <= font_size <= _MAX_PREVIEW_FONT_SIZE or
+                os.fstat(pak.fileno()).st_size < _ENTRY_RECORD_SIZE + font_size):
+            raise ValueError("PAK không chứa font có thể xem trước")
+
+        magic = header[_ENTRY_RECORD_SIZE:_ENTRY_RECORD_SIZE + 4]
+        if magic not in (b"\x00\x01\x00\x00", b"OTTO"):
+            raise ValueError("PAK không chứa font TTF/OTF")
+
+        pak.seek(_ENTRY_RECORD_SIZE)
+        font_data = pak.read(font_size)
+
+    if len(font_data) != font_size:
+        raise ValueError("Dữ liệu font trong PAK bị thiếu")
+    mime = "font/otf" if magic == b"OTTO" else "font/ttf"
+    return font_data, mime
 
 
 def _get_template_path() -> str:

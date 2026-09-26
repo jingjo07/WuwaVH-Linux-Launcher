@@ -3,7 +3,7 @@
    Cyber Crimson Neon #ff1a53 + Deep Obsidian #030005
    ════════════════════════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 :root {
   --cyan: #ff1a53;
@@ -581,7 +581,7 @@ body.theme-cyber .wctrl.close:hover {
 }
 
 .cyber-news-title {
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Chakra Petch', 'Noto Sans', sans-serif;
   font-size: 12px;
   font-weight: 700;
   color: #ffffff;
@@ -671,7 +671,7 @@ body.theme-cyber .wctrl.close:hover {
 }
 
 .cyber-config-label {
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Chakra Petch', 'Noto Sans', sans-serif;
   font-size: 9px;
   font-weight: 700;
   color: rgba(255, 26, 83, 0.45);
@@ -956,7 +956,7 @@ body.theme-cyber .wctrl.close:hover {
 }
 
 .play-btn-text {
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Chakra Petch', 'Noto Sans', sans-serif;
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.22em;
@@ -1064,7 +1064,7 @@ body.theme-cyber #perf-page .perf-title-icon {
 }
 
 body.theme-cyber #perf-page .perf-main-title {
-  font-family: 'Orbitron', sans-serif !important;
+  font-family: 'Chakra Petch', 'Noto Sans', sans-serif !important;
   color: #ffffff !important;
   letter-spacing: 0.06em !important;
   text-shadow: 0 0 10px rgba(255, 26, 83, 0.4) !important;
@@ -1107,7 +1107,7 @@ body.theme-cyber #perf-page .perf-mode-btn.active {
   border-color: var(--cyan) !important;
   color: var(--cyan) !important;
   box-shadow: 0 0 14px rgba(255, 26, 83, 0.3) !important;
-  font-family: 'Orbitron', sans-serif !important;
+  font-family: 'Chakra Petch', 'Noto Sans', sans-serif !important;
   font-weight: 700 !important;
 }
 
@@ -1161,7 +1161,7 @@ body.theme-cyber #perf-page .perf-preset-detail-box {
 
 body.theme-cyber #perf-page .perf-preset-detail-title {
   color: var(--cyan) !important;
-  font-family: 'Orbitron', sans-serif !important;
+  font-family: 'Chakra Petch', 'Noto Sans', sans-serif !important;
   text-shadow: 0 0 8px rgba(255, 26, 83, 0.4) !important;
 }
 
@@ -1182,7 +1182,7 @@ body.theme-cyber #perf-page .perf-preset-gpu-desc {
 body.theme-cyber #perf-page .perf-action-btn {
   background: linear-gradient(135deg, #ff1a53 0%, #ff4d6d 50%, #d9043d 100%) !important;
   color: #ffffff !important;
-  font-family: 'Orbitron', sans-serif !important;
+  font-family: 'Chakra Petch', 'Noto Sans', sans-serif !important;
   font-weight: 800 !important;
   letter-spacing: 1.2px !important;
   border-radius: 12px !important;
@@ -1340,7 +1340,7 @@ body.theme-cyber .modern-font-a-icon {
   align-items: center;
   justify-content: center;
   color: var(--cyan);
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Chakra Petch', 'Noto Sans', sans-serif;
   font-size: 20px;
   font-weight: 900;
   box-shadow: 0 0 12px rgba(255, 26, 83, 0.3);
@@ -1356,7 +1356,7 @@ body.theme-cyber .modern-font-header-text {
 
 body.theme-cyber .modern-font-main-title {
   margin: 0;
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Chakra Petch', 'Noto Sans', sans-serif;
   font-size: 18px;
   font-weight: 800;
   color: #ffffff;
@@ -1481,7 +1481,7 @@ body.theme-cyber .btn-modern-browse {
   border-radius: 10px;
   color: #ffffff;
   font-size: 12px;
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Chakra Petch', 'Noto Sans', sans-serif;
   font-weight: 800;
   letter-spacing: 1px;
   cursor: pointer;
@@ -1507,7 +1507,7 @@ body.theme-cyber .btn-modern-install {
   border: none;
   border-radius: 10px;
   color: #ffffff !important;
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Chakra Petch', 'Noto Sans', sans-serif;
   font-size: 12.5px;
   font-weight: 800;
   letter-spacing: 1px;
@@ -1534,7 +1534,7 @@ body.theme-cyber .btn-modern-pak-install {
   border: 1.5px solid rgba(255, 26, 83, 0.35) !important;
   border-radius: 10px;
   color: var(--cyan) !important;
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Chakra Petch', 'Noto Sans', sans-serif;
   font-size: 11.5px;
   font-weight: 700;
   letter-spacing: 0.8px;
@@ -1585,7 +1585,7 @@ body.theme-cyber #theme-page .theme-header-badge {
 }
 
 body.theme-cyber #theme-page .theme-page-title {
-  font-family: 'Orbitron', sans-serif !important;
+  font-family: 'Chakra Petch', 'Noto Sans', sans-serif !important;
   color: #ffffff !important;
   letter-spacing: 0.08em;
   text-shadow: 0 0 10px rgba(255, 26, 83, 0.4);
@@ -1618,7 +1618,7 @@ body.theme-cyber .theme-badge-active {
   background: var(--cyan);
   color: #030005;
   font-weight: 800;
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Chakra Petch', 'Noto Sans', sans-serif;
   box-shadow: 0 0 12px var(--cyan);
 }
 
@@ -1626,7 +1626,7 @@ body.theme-cyber .theme-apply-btn {
   background: rgba(255, 26, 83, 0.1);
   border: 1px solid var(--cyan);
   color: var(--cyan);
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Chakra Petch', 'Noto Sans', sans-serif;
   font-size: 11px;
   letter-spacing: 0.08em;
   border-radius: 6px;
@@ -1674,4 +1674,127 @@ body.theme-cyber .ctx-item:hover {
 body.theme-cyber .ctx-item:hover .ctx-icon {
   color: var(--cyan);
   filter: drop-shadow(0 0 6px var(--cyan));
+}
+
+/* Chakra Petch keeps the Cyber lettering consistent across Vietnamese glyphs. */
+body.theme-cyber .cyber-news-title,
+body.theme-cyber .cyber-config-label,
+body.theme-cyber .play-btn-text,
+body.theme-cyber #perf-page .perf-main-title,
+body.theme-cyber #perf-page .perf-preset-detail-title,
+body.theme-cyber .modern-font-main-title,
+body.theme-cyber #theme-page .theme-page-title {
+  font-family: 'Chakra Petch', 'Noto Sans', sans-serif !important;
+  letter-spacing: .07em !important;
+}
+
+body.theme-cyber #perf-page .perf-action-btn,
+body.theme-cyber .btn-modern-browse,
+body.theme-cyber .btn-modern-install,
+body.theme-cyber .btn-modern-pak-install,
+body.theme-cyber .theme-badge-active,
+body.theme-cyber .theme-apply-btn {
+  font-family: 'Chakra Petch', 'Noto Sans', sans-serif !important;
+  letter-spacing: .07em !important;
+}
+
+body.theme-cyber .cyber-progress-title,
+body.theme-cyber .btn-modern-restore,
+body.theme-cyber .modern-field-label,
+body.theme-cyber .font-progress,
+body.theme-cyber #theme-page .theme-header-badge,
+body.theme-cyber #perf-page .perf-section-title,
+body.theme-cyber #perf-page .perf-preset-gpu-label,
+body.theme-cyber #perf-page .perf-tool-btn {
+  font-family: 'Chakra Petch', 'Noto Sans', sans-serif !important;
+  letter-spacing: .04em !important;
+}
+
+body.theme-cyber .play-btn-text {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: .12em !important;
+  color: #ffe7ee;
+  text-shadow: 0 0 9px rgba(255, 26, 83, .35);
+}
+
+body.theme-cyber .play-btn-neon.running .play-btn-text {
+  color: #ffc0d0;
+}
+
+body.theme-cyber .current-font-info {
+  min-width: 0;
+  flex: 1;
+}
+
+body.theme-cyber .current-font-label,
+body.theme-cyber .btn-modern-restore {
+  flex-shrink: 0;
+}
+
+body.theme-cyber .current-font-val {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+body.theme-cyber .cyber-config-label { color: #e9a6b8; }
+body.theme-cyber .cyber-news-title { color: #fff; }
+
+body.theme-cyber .cyber-menu-btn:focus-visible,
+body.theme-cyber .play-btn-neon:focus-visible,
+body.theme-cyber .cyber-game-files-btn:focus-visible,
+body.theme-cyber .cyber-toggle-row:focus-visible,
+body.theme-cyber .cyber-platform-badge:focus-visible,
+body.theme-cyber .sb-icon:focus-visible {
+  outline: 2px solid #ff9bb6;
+  outline-offset: 3px;
+}
+
+body.theme-cyber .play-btn-neon:disabled {
+  cursor: default;
+}
+
+body.theme-cyber .play-btn-neon:disabled:hover {
+  transform: none;
+  border-color: var(--magenta);
+}
+
+body.theme-cyber .play-btn-neon:disabled:hover::before {
+  left: -60%;
+}
+
+body.theme-cyber .cyber-status-text {
+  color: #c9a0ad;
+  font-family: 'Chakra Petch', 'Noto Sans', sans-serif;
+  letter-spacing: .02em;
+}
+
+body.theme-cyber .cyber-status-dot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #ff668d;
+  box-shadow: 0 0 8px rgba(255, 77, 109, .6);
+}
+
+body.theme-cyber .cyber-status-text.is-missing .cyber-status-dot {
+  background: #ffb86b;
+  box-shadow: 0 0 8px rgba(255, 184, 107, .5);
+}
+
+body.theme-cyber .cyber-status-text.is-running .cyber-status-dot {
+  background: #a8f0c2;
+  box-shadow: 0 0 8px rgba(168, 240, 194, .55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.theme-cyber .glitch-text,
+  body.theme-cyber .glitch-text::before,
+  body.theme-cyber .glitch-text::after,
+  body.theme-cyber .play-btn-neon {
+    animation: none;
+  }
 }

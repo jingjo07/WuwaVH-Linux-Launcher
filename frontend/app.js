@@ -216,17 +216,21 @@ function updateLaunchOptionsUI() {
   const csharpCyber = document.getElementById("toggle-csharp-cyber");
 
   if (dx11Modern) dx11Modern.classList.toggle("active", isDx11Enabled);
+  if (dx11Modern) dx11Modern.setAttribute("aria-checked", String(isDx11Enabled));
   if (dx11Classic) dx11Classic.classList.toggle("active", isDx11Enabled);
   if (dx11Cyber) {
     dx11Cyber.classList.toggle("active", isDx11Enabled);
+    dx11Cyber.setAttribute("aria-checked", String(isDx11Enabled));
     const knob = dx11Cyber.querySelector(".neon-toggle");
     if (knob) knob.classList.toggle("on", isDx11Enabled);
   }
 
   if (csharpModern) csharpModern.classList.toggle("active", isCSharpEnvEnabled);
+  if (csharpModern) csharpModern.setAttribute("aria-checked", String(isCSharpEnvEnabled));
   if (csharpClassic) csharpClassic.classList.toggle("active", isCSharpEnvEnabled);
   if (csharpCyber) {
     csharpCyber.classList.toggle("active", isCSharpEnvEnabled);
+    csharpCyber.setAttribute("aria-checked", String(isCSharpEnvEnabled));
     const knob = csharpCyber.querySelector(".neon-toggle");
     if (knob) knob.classList.toggle("on", isCSharpEnvEnabled);
   }
@@ -234,6 +238,7 @@ function updateLaunchOptionsUI() {
 
 async function toggleDx11(e) {
   if (e) e.stopPropagation();
+  const previous = isDx11Enabled;
   isDx11Enabled = !isDx11Enabled;
   updateLaunchOptionsUI();
   try {
@@ -242,12 +247,15 @@ async function toggleDx11(e) {
     updateLaunchOptionsUI();
     toast(isDx11Enabled ? "Đã bật DirectX 11 (DXVK)" : "Đã tắt DirectX 11 (Dùng mặc định DX12)", "success");
   } catch (err) {
+    isDx11Enabled = previous;
+    updateLaunchOptionsUI();
     toast(`Lỗi đổi DirectX 11: ${err.message}`, "error");
   }
 }
 
 async function toggleCSharpEnv(e) {
   if (e) e.stopPropagation();
+  const previous = isCSharpEnvEnabled;
   isCSharpEnvEnabled = !isCSharpEnvEnabled;
   updateLaunchOptionsUI();
   try {
@@ -256,6 +264,8 @@ async function toggleCSharpEnv(e) {
     updateLaunchOptionsUI();
     toast(isCSharpEnvEnabled ? "Đã bật CSharp (-ForceEnableCSharpEnvironment)" : "Đã tắt CSharp", "success");
   } catch (err) {
+    isCSharpEnvEnabled = previous;
+    updateLaunchOptionsUI();
     toast(`Lỗi đổi CSharp: ${err.message}`, "error");
   }
 }
@@ -274,6 +284,7 @@ async function refreshStatus() {
     }
     updateLaunchOptionsUI();
     updatePlayBtn();
+    updateModernStatus();
     updateLauncherBadge();
     updateVhVersionUI();
     if (gameStatus.launcher_version) {
@@ -289,6 +300,24 @@ async function refreshStatus() {
   } catch (e) {
     console.warn("[Status Refresh Error]", e);
   }
+}
+
+function updateModernStatus() {
+  const card = document.querySelector(".modern-status-card");
+  const title = document.getElementById("modern-game-status");
+  const detail = document.getElementById("modern-game-detail");
+  if (!card || !title || !detail) return;
+
+  const missing = !gameStatus.has_game;
+  const running = Boolean(gameStatus.game_running);
+  card.classList.toggle("is-missing", missing);
+  card.classList.toggle("is-running", running);
+  title.textContent = missing ? "Chưa tìm thấy game" : running ? "Game đang chạy" : "Sẵn sàng chơi";
+  detail.textContent = missing
+    ? "Chọn thư mục cài đặt để bắt đầu"
+    : gameStatus.installed_vh
+      ? `Việt hóa ${gameStatus.vh_version ? `v${gameStatus.vh_version}` : "đã cài đặt"} · ${launcherInfo.current === "heroic" ? "Heroic" : "Steam"}`
+      : "Chưa cài Việt hóa · Có thể cập nhật ngay";
 }
 
 function updatePlayBtn() {
@@ -315,6 +344,7 @@ function updatePlayBtn() {
       textEl.textContent = text;
     }
     modernBtn.classList.toggle("running", isRunning);
+    modernBtn.disabled = isRunning;
   }
 
   // Cyber Play Button
@@ -325,6 +355,16 @@ function updatePlayBtn() {
       titleEl.textContent = text;
     }
     cyberBtn.classList.toggle("running", isRunning);
+    cyberBtn.disabled = isRunning;
+  }
+  const cyberStatus = document.getElementById("cyber-game-size-label");
+  if (cyberStatus) cyberStatus.textContent = !gameStatus.has_game
+    ? "Chưa tìm thấy game"
+    : isRunning ? "Game đang chạy" : "Sẵn sàng";
+  const cyberStatusBox = document.getElementById("cyber-status-text");
+  if (cyberStatusBox) {
+    cyberStatusBox.classList.toggle("is-missing", !gameStatus.has_game);
+    cyberStatusBox.classList.toggle("is-running", isRunning);
   }
 }
 
@@ -640,6 +680,18 @@ const drawerItemTheme = document.getElementById("drawer-item-theme");
 const sidebarDrawer = document.getElementById("sidebar-drawer");
 const dockExpandBtn = document.getElementById("dock-expand-btn");
 const drawerCollapseBtn = document.getElementById("drawer-collapse-btn");
+const modernDrawerBackdrop = document.getElementById("modern-drawer-backdrop");
+
+function setModernDrawerOpen(open) {
+  if (!sidebarDrawer) return;
+  sidebarDrawer.classList.toggle("open", open);
+  sidebarDrawer.setAttribute("aria-hidden", String(!open));
+  sidebarDrawer.inert = !open;
+  if (modernDrawerBackdrop) modernDrawerBackdrop.classList.toggle("open", open);
+  if (dockExpandBtn) dockExpandBtn.setAttribute("aria-expanded", String(open));
+  if (open && drawerCollapseBtn) drawerCollapseBtn.focus();
+  if (!open && sidebarDrawer.contains(document.activeElement) && dockExpandBtn) dockExpandBtn.focus();
+}
 
 const bottomLayer = document.getElementById("bottom-layer");
 
@@ -651,7 +703,7 @@ function switchTab(tab) {
   currentTab = tab;
 
   // Close drawer if open
-  if (sidebarDrawer) sidebarDrawer.classList.remove("open");
+  setModernDrawerOpen(false);
 
   // Update Classic Nav tabs
   if (tabHome) tabHome.classList.toggle("active", tab === "home");
@@ -666,6 +718,8 @@ function switchTab(tab) {
   if (dockTabPerf) dockTabPerf.classList.toggle("active", tab === "perf");
   if (dockTabFont) dockTabFont.classList.toggle("active", tab === "font");
   if (dockTabTheme) dockTabTheme.classList.toggle("active", tab === "theme");
+  [[dockTabHome, "home"], [dockTabPerf, "perf"], [dockTabFont, "font"], [dockTabTheme, "theme"]]
+    .forEach(([item, name]) => { if (item) item.setAttribute("aria-current", String(tab === name)); });
 
   // Update Modern Drawer items
   if (drawerItemHome) drawerItemHome.classList.toggle("active", tab === "home");
@@ -673,6 +727,8 @@ function switchTab(tab) {
   if (drawerItemPerf) drawerItemPerf.classList.toggle("active", tab === "perf");
   if (drawerItemFont) drawerItemFont.classList.toggle("active", tab === "font");
   if (drawerItemTheme) drawerItemTheme.classList.toggle("active", tab === "theme");
+  [[drawerItemHome, "home"], [drawerItemPerf, "perf"], [drawerItemFont, "font"], [drawerItemTheme, "theme"]]
+    .forEach(([item, name]) => { if (item) item.setAttribute("aria-current", String(tab === name)); });
 
   // Update Cyber Nav tabs
   const cyberNavHome = document.getElementById("cyber-nav-home");
@@ -735,11 +791,6 @@ const cyberNavFont = document.getElementById("cyber-nav-font");
 if (cyberNavFont) cyberNavFont.onclick = () => switchTab("font");
 const cyberNavTheme = document.getElementById("cyber-nav-theme");
 if (cyberNavTheme) cyberNavTheme.onclick = () => switchTab("theme");
-const cyberNavFiles = document.getElementById("cyber-nav-files");
-if (cyberNavFiles) cyberNavFiles.onclick = () => {
-  if (!gameStatus.has_game) showPathModal();
-  else ipc("open_game_folder").catch(e => toast(e.message, "error"));
-};
 const cyberBtnGameFiles = document.getElementById("cyber-btn-game-files");
 if (cyberBtnGameFiles) cyberBtnGameFiles.onclick = () => {
   if (!gameStatus.has_game) showPathModal();
@@ -750,24 +801,26 @@ if (cyberBtnGameFiles) cyberBtnGameFiles.onclick = () => {
 if (dockExpandBtn) {
   dockExpandBtn.onclick = (e) => {
     e.stopPropagation();
-    sidebarDrawer.classList.add("open");
+    setModernDrawerOpen(true);
   };
 }
 
 if (drawerCollapseBtn) {
   drawerCollapseBtn.onclick = (e) => {
     e.stopPropagation();
-    sidebarDrawer.classList.remove("open");
+    setModernDrawerOpen(false);
   };
 }
 
 document.addEventListener("click", (e) => {
   if (sidebarDrawer && sidebarDrawer.classList.contains("open")) {
     if (!sidebarDrawer.contains(e.target) && e.target !== dockExpandBtn) {
-      sidebarDrawer.classList.remove("open");
+      setModernDrawerOpen(false);
     }
   }
 });
+
+if (modernDrawerBackdrop) modernDrawerBackdrop.onclick = () => setModernDrawerOpen(false);
 
 
 
@@ -783,8 +836,10 @@ function toggleMenu(open, triggerBtn) {
   ctxMenu.classList.toggle("open", menuOpen);
   if (menuToggleClassic) menuToggleClassic.classList.toggle("active", menuOpen);
   if (menuToggleModern) menuToggleModern.classList.toggle("active", menuOpen);
+  if (menuToggleModern) menuToggleModern.setAttribute("aria-expanded", String(menuOpen));
   const cyberMenuBtn = document.getElementById("btn-menu-toggle-cyber");
   if (cyberMenuBtn) cyberMenuBtn.classList.toggle("active", menuOpen);
+  if (cyberMenuBtn) cyberMenuBtn.setAttribute("aria-expanded", String(menuOpen));
 
   if (menuOpen) {
     const btn = triggerBtn || (currentThemeId === "classic" ? menuToggleClassic : (currentThemeId === "cyber" ? cyberMenuBtn : menuToggleModern));
@@ -858,6 +913,12 @@ if (btnPlayClassic) btnPlayClassic.onclick = handlePlayGame;
 if (btnPlayModern) btnPlayModern.onclick = handlePlayGame;
 if (btnPlayCyber) btnPlayCyber.onclick = handlePlayGame;
 
+const modernQuickUpdate = document.getElementById("modern-quick-update");
+if (modernQuickUpdate) modernQuickUpdate.onclick = () => {
+  if (!gameStatus.has_game) showPathModal();
+  else startUpdate();
+};
+
 // ── Topbar Game files button ───────────────────────────────────────────────
 
 const btnGameFiles = document.getElementById("btn-game-files");
@@ -874,18 +935,6 @@ if (btnGameFiles) {
 
 
 // ── Context Menu Actions ───────────────────────────────────────────────────
-
-const ctxFolder = document.getElementById("ctx-folder");
-if (ctxFolder) {
-  ctxFolder.onclick = () => {
-    toggleMenu(false);
-    if (!gameStatus.has_game) {
-      showPathModal();
-      return;
-    }
-    ipc("open_game_folder").catch(e => toast(e.message, "error"));
-  };
-}
 
 const launcherBadge = document.getElementById("launcher-badge");
 if (launcherBadge) launcherBadge.onclick = () => openLauncherModal();
@@ -1289,20 +1338,47 @@ const fontProgress = document.getElementById("font-progress");
 const fontProgressText = document.getElementById("font-progress-text");
 
 let selectedFontFilePath = "";
+let fontPreviewFace = null;
+let fontPreviewRequest = 0;
+
+function clearFontPreview() {
+  for (const el of [fontCurrent, modernFontCurrentVal]) {
+    if (el) el.style.removeProperty("font-family");
+  }
+  if (fontPreviewFace && document.fonts) document.fonts.delete(fontPreviewFace);
+  fontPreviewFace = null;
+}
+
+async function applyFontPreview(preview, requestId) {
+  if (requestId !== fontPreviewRequest || !preview?.data ||
+      !["font/ttf", "font/otf"].includes(preview.mime) ||
+      !window.FontFace || !document.fonts) return;
+  const family = `WuWaVHFontPreview${requestId}`;
+  const face = new FontFace(family, `url(data:${preview.mime};base64,${preview.data})`);
+  await face.load();
+  if (requestId !== fontPreviewRequest) return;
+  document.fonts.add(face);
+  fontPreviewFace = face;
+  for (const el of [fontCurrent, modernFontCurrentVal]) {
+    if (el) el.style.setProperty("font-family", `"${family}", "Noto Sans", sans-serif`, "important");
+  }
+}
 
 async function updateFontStatus() {
+  const requestId = ++fontPreviewRequest;
+  clearFontPreview();
   if (modernFontCurrentVal) modernFontCurrentVal.textContent = "Đang kiểm tra...";
   if (fontCurrent) fontCurrent.textContent = "Đang kiểm tra...";
 
   try {
     const status = await ipc("get_font_status");
+    if (requestId !== fontPreviewRequest) return;
     let display = "Chưa cài font";
     let detail = "Hãy cài font để hiển thị tiếng Việt đúng";
     let icon = "⚠️";
 
     if (status.active_font === "custom") {
-      const cName = status.custom_font_name ? `${status.custom_font_name}_99_P` : "CustomFont_99_P";
-      display = cName;
+      display = status.custom_font_name || "Font tuỳ chỉnh";
       detail = "Font tuỳ chỉnh đang được sử dụng";
       icon = "🎨";
     } else if (status.active_font === "default") {
@@ -1312,7 +1388,10 @@ async function updateFontStatus() {
     }
 
     // Update Modern View
-    if (modernFontCurrentVal) modernFontCurrentVal.textContent = display;
+    if (modernFontCurrentVal) {
+      modernFontCurrentVal.textContent = display;
+      modernFontCurrentVal.title = display;
+    }
     if (modernFontRestoreBtn) {
       modernFontRestoreBtn.disabled = !status.default_available;
     }
@@ -1327,7 +1406,16 @@ async function updateFontStatus() {
     if (fontInstallDefaultBtn) {
       fontInstallDefaultBtn.disabled = !status.default_available;
     }
+    if (status.active_font !== "none") {
+      try {
+        const preview = await ipc("get_font_preview");
+        await applyFontPreview(preview, requestId);
+      } catch (e) {
+        console.warn("[Font Preview Error]", e);
+      }
+    }
   } catch (e) {
+    if (requestId !== fontPreviewRequest) return;
     if (modernFontCurrentVal) modernFontCurrentVal.textContent = `Lỗi: ${e.message}`;
     if (fontCurrent) fontCurrent.textContent = `Lỗi: ${e.message}`;
   }
@@ -1702,6 +1790,8 @@ function onUpdateProgress(d) {
 }
 
 async function onUpdateDone(d) {
+  modUpdateInProgress = false;
+  if (modernQuickUpdate) modernQuickUpdate.disabled = false;
   showUpdateProgress(100, "✓ CẬP NHẬT VIỆT HOÁ HOÀN TẤT!");
   toast("✓ Đã cập nhật bản dịch Việt Hoá mới nhất!", "success");
   await Promise.allSettled([refreshStatus(), loadVersion()]);
@@ -1709,6 +1799,8 @@ async function onUpdateDone(d) {
 }
 
 function onUpdateError(d) {
+  modUpdateInProgress = false;
+  if (modernQuickUpdate) modernQuickUpdate.disabled = false;
   const errMsg = (d && d.error) || "Lỗi không xác định";
   showUpdateProgress(0, `❌ Lỗi: ${errMsg}`, true);
   toast(`Lỗi cập nhật: ${errMsg}`, "error");
@@ -1742,7 +1834,12 @@ function onUpdateAssetsError(d) {
   hideUpdateProgress(4000);
 }
 
+let modUpdateInProgress = false;
+
 function startUpdate() {
+  if (modUpdateInProgress) return;
+  modUpdateInProgress = true;
+  if (modernQuickUpdate) modernQuickUpdate.disabled = true;
   switchTab("home");
   showUpdateProgress(0, "Đang kết nối máy chủ cập nhật...");
   toast("Đang tải cập nhật Việt Hoá...", "info");
@@ -1875,6 +1972,7 @@ async function selectLauncher(type) {
     launcherInfo.current = type;
     try { localStorage.setItem("wuwavh_launcher", type); } catch { }
     updateLauncherBadge();
+    updateModernStatus();
     updateLauncherModalUI();
     toast(`Đã đổi launcher chạy game thành: ${type === "heroic" ? "Heroic Games Launcher" : "Steam"}`, "success");
     setTimeout(closeLauncherModal, 400);
@@ -1889,7 +1987,7 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
     if (menuOpen) toggleMenu(false);
     else if (sidebarDrawer && sidebarDrawer.classList.contains("open"))
-      sidebarDrawer.classList.remove("open");
+      setModernDrawerOpen(false);
     else if (launcherModal && launcherModal.classList.contains("visible"))
       closeLauncherModal();
     else if (pathModal && pathModal.classList.contains("visible"))
@@ -1926,20 +2024,25 @@ async function init() {
   // Launch options listeners
   const dx11M = document.getElementById("toggle-dx11-modern");
   if (dx11M) dx11M.onclick = toggleDx11;
+  if (dx11M) dx11M.onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleDx11(e); } };
   const dx11C = document.getElementById("toggle-dx11-classic");
   if (dx11C) dx11C.onclick = toggleDx11;
   const dx11Cy = document.getElementById("toggle-dx11-cyber");
   if (dx11Cy) dx11Cy.onclick = toggleDx11;
+  if (dx11Cy) dx11Cy.onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleDx11(e); } };
 
   const csharpM = document.getElementById("toggle-csharp-modern");
   if (csharpM) csharpM.onclick = toggleCSharpEnv;
+  if (csharpM) csharpM.onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleCSharpEnv(e); } };
   const csharpC = document.getElementById("toggle-csharp-classic");
   if (csharpC) csharpC.onclick = toggleCSharpEnv;
   const csharpCy = document.getElementById("toggle-csharp-cyber");
   if (csharpCy) csharpCy.onclick = toggleCSharpEnv;
+  if (csharpCy) csharpCy.onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleCSharpEnv(e); } };
 
   const badgeCy = document.getElementById("launcher-badge-cyber");
   if (badgeCy) badgeCy.onclick = () => openLauncherModal();
+  if (badgeCy) badgeCy.onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openLauncherModal(); } };
 
   // Restore saved volume
   let savedVol = 35;
@@ -1983,5 +2086,3 @@ async function init() {
 }
 
 init();
-
-

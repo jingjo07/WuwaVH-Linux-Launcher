@@ -44,6 +44,18 @@
   display: flex !important;
 }
 
+#btn-game-files {
+  color: var(--gold-bright);
+  border-color: rgba(223, 183, 80, .4);
+  background: rgba(223, 183, 80, .09);
+}
+
+#btn-game-files:hover {
+  color: #fff;
+  border-color: var(--gold-mid);
+  background: rgba(223, 183, 80, .18);
+}
+
 /* ════════════════════════════════════════════════════════════
    1. TOP NAVIGATION BAR (Imperial Gold HUD Header)
    ════════════════════════════════════════════════════════════ */
@@ -1169,4 +1181,3 @@
 #perf-page .perf-action-btn:hover {
   box-shadow: 0 6px 24px rgba(201, 168, 76, 0.6) !important;
 }
-

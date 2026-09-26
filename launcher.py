@@ -146,6 +146,9 @@ class IPC:
                 path = self._pick_pak_file()
                 return {"path": path}
 
+            case "get_font_preview":
+                return game.get_font_preview()
+
             case "install_font":
                 font_path = data.get("path", "")
                 if not font_path or not os.path.isfile(font_path):

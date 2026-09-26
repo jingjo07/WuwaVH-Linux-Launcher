@@ -1246,6 +1246,33 @@ def get_font_status() -> dict:
     return status
 
 
+def get_font_preview() -> dict:
+    """Return the active in-game font for the font name preview in the UI."""
+    import base64
+    from backend import font_packer
+
+    status = get_font_status()
+    pak_dir = get_pak_dir()
+    if not pak_dir or status["active_font"] == "none":
+        return {"data": None, "mime": None}
+
+    names = (
+        (CUSTOM_FONT_PAK_NAME, LEGACY_CUSTOM_FONT_PAK)
+        if status["active_font"] == "custom"
+        else (DEFAULT_FONT_PAK_NAME, LEGACY_DEFAULT_FONT_PAK)
+    )
+    for name in names:
+        path = os.path.join(pak_dir, name)
+        if not os.path.isfile(path):
+            continue
+        try:
+            font_data, mime = font_packer.read_font_data_from_pak(path)
+            return {"data": base64.b64encode(font_data).decode("ascii"), "mime": mime}
+        except (OSError, ValueError):
+            continue
+    return {"data": None, "mime": None}
+
+
 def install_font_from_pak(pak_file_path: str) -> dict:
     """
     Install a custom font directly from an existing PAK file.
