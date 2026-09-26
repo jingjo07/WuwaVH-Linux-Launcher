@@ -266,13 +266,17 @@ def download_file(url: str, dest: str, progress_cb=None, num_workers: int = 8, c
 
     if HAS_URLLIB3:
         try:
-            r = _http_pool.request("GET", url, headers={**headers_base, "Range": "bytes=0-0"}, timeout=12.0)
-            cr = r.headers.get("Content-Range", "")
-            if r.status == 206 and "/" in cr:
-                total_size = int(cr.split("/")[-1])
-                supports_range = True
-                cand = getattr(r, "geturl", lambda: None)() or getattr(r, "url", None) or url
-                resolved_url = urllib.parse.urljoin(url, cand)
+            r = _http_pool.request("GET", url, headers={**headers_base, "Range": "bytes=0-0"}, timeout=12.0, preload_content=False)
+            try:
+                cr = r.headers.get("Content-Range", "")
+                if r.status == 206 and "/" in cr:
+                    total_size = int(cr.split("/")[-1])
+                    supports_range = True
+                    cand = getattr(r, "geturl", lambda: None)() or getattr(r, "url", None) or url
+                    resolved_url = urllib.parse.urljoin(url, cand)
+            finally:
+                r.close()
+                r.release_conn()
         except Exception:
             pass
 
@@ -476,4 +480,3 @@ PROVIDERS = [
     ("mod",  "WuWaVH_99_P.pak", "Bản dịch chính"),
     ("raw",  "winhttp.dll",     "Proxy DLL"),
 ]
-

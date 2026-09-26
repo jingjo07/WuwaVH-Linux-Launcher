@@ -342,6 +342,8 @@ class IPC:
                 def _progress(done, total, f=filename, i=idx):
                     now = time.monotonic()
                     dt = now - t_last[0]
+                    if dt < 0.35 and (not total or done < total):
+                        return
                     if dt >= 0.35:
                         instant = (done - b_last[0]) / (1_048_576 * dt)
                         if speed_smooth[0] <= 0.0:
@@ -366,14 +368,12 @@ class IPC:
                     })
 
                 downloader.download_file(href, dest, _progress)
-                sha = downloader.sha256_file(dest)
                 self.emit("update_progress", {
                     "phase":    "done_file",
                     "file":     filename,
                     "step":     idx + 1,
                     "total":    total_providers,
                     "progress": 1.0,
-                    "sha256":   sha[:16],
                 })
 
             # Automatically copy and install downloaded paks & dll into the game directory
@@ -411,6 +411,8 @@ class IPC:
                 def _progress(done, total, f=filename, i=idx):
                     now = time.monotonic()
                     dt = now - t_last[0]
+                    if dt < 0.35 and (not total or done < total):
+                        return
                     if dt >= 0.35:
                         instant = (done - b_last[0]) / (1_048_576 * dt)
                         if speed_smooth[0] <= 0.0:
