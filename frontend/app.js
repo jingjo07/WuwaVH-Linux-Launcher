@@ -48,6 +48,9 @@ window.__onEvent = (event, data) => {
     case "update_assets_progress": onUpdateAssetsProgress(data); break;
     case "update_assets_done": onUpdateAssetsDone(data); break;
     case "update_assets_error": onUpdateAssetsError(data); break;
+    case "launcher_update_progress": onLauncherUpdateProgress(data); break;
+    case "launcher_update_done": onLauncherUpdateDone(data); break;
+    case "launcher_update_error": onLauncherUpdateError(data); break;
   }
 };
 
@@ -141,6 +144,73 @@ function updateLauncherVersionUI(ver) {
     el.textContent = `Launcher ${verStr}`;
   });
 }
+
+let launcherUpdateInfo = null;
+let launcherUpdateBusy = false;
+
+async function checkLauncherUpdate(manual = false) {
+  try {
+    const info = await ipc("check_launcher_update");
+    launcherUpdateInfo = info;
+    const banner = document.getElementById("launcher-update-banner");
+    if (!info.available) {
+      if (banner) banner.hidden = true;
+      if (manual) toast("Launcher đã là phiên bản mới nhất.", "success");
+      return;
+    }
+    document.getElementById("launcher-update-title").textContent = `Launcher v${info.latest_version} đã có sẵn`;
+    document.getElementById("launcher-update-detail").textContent = info.can_install
+      ? `Bạn đang dùng v${info.current_version}. Nhấn cập nhật để tải và khởi động lại.`
+      : `Bạn đang dùng v${info.current_version}. Mở GitHub để tải bản mới.`;
+    document.getElementById("launcher-update-action").textContent = info.can_install ? "Cập nhật" : "Xem bản mới";
+    if (banner) banner.hidden = false;
+  } catch (error) {
+    if (manual) toast(`Không thể kiểm tra bản mới: ${error.message}`, "error");
+  }
+}
+
+async function startLauncherUpdate() {
+  if (!launcherUpdateInfo || launcherUpdateBusy) return;
+  if (!launcherUpdateInfo.can_install) {
+    if (launcherUpdateInfo.release_url) ipc("open_url", { url: launcherUpdateInfo.release_url }).catch(e => toast(e.message, "error"));
+    return;
+  }
+  launcherUpdateBusy = true;
+  const button = document.getElementById("launcher-update-action");
+  button.disabled = true;
+  button.textContent = "Đang tải...";
+  try {
+    await ipc("install_launcher_update");
+  } catch (error) {
+    onLauncherUpdateError({ error: error.message });
+  }
+}
+
+function onLauncherUpdateProgress(data) {
+  const detail = document.getElementById("launcher-update-detail");
+  if (detail) detail.textContent = data.total
+    ? `Đang tải bản mới: ${Math.min(100, Math.round(data.done / data.total * 100))}%`
+    : `Đang tải bản mới: ${(data.done / 1048576).toFixed(1)} MB`;
+}
+
+function onLauncherUpdateDone(data) {
+  const detail = document.getElementById("launcher-update-detail");
+  if (detail) detail.textContent = `Đã cài v${data.version}. Đang khởi động lại...`;
+}
+
+function onLauncherUpdateError(data) {
+  launcherUpdateBusy = false;
+  const button = document.getElementById("launcher-update-action");
+  if (button) { button.disabled = false; button.textContent = "Thử lại"; }
+  const detail = document.getElementById("launcher-update-detail");
+  if (detail) detail.textContent = data.error || "Không thể cập nhật Launcher.";
+  toast(`Cập nhật Launcher thất bại: ${data.error}`, "error");
+}
+
+const launcherUpdateAction = document.getElementById("launcher-update-action");
+if (launcherUpdateAction) launcherUpdateAction.onclick = startLauncherUpdate;
+const launcherUpdateDismiss = document.getElementById("launcher-update-dismiss");
+if (launcherUpdateDismiss) launcherUpdateDismiss.onclick = () => { document.getElementById("launcher-update-banner").hidden = true; };
 
 // Immediate initial sync from window.LAUNCHER_VERSION (injected via WebKit or version.js)
 if (typeof window !== "undefined" && window.LAUNCHER_VERSION) {
@@ -973,6 +1043,11 @@ if (ctxUpdateLauncher) {
     startUpdateAssets();
   };
 }
+const ctxCheckLauncherUpdate = document.getElementById("ctx-check-launcher-update");
+if (ctxCheckLauncherUpdate) ctxCheckLauncherUpdate.onclick = () => {
+  toggleMenu(false);
+  checkLauncherUpdate(true);
+};
 
 const ctxKill = document.getElementById("ctx-kill");
 if (ctxKill) {
@@ -2059,6 +2134,7 @@ async function init() {
     updateLauncherVersionUI(window.LAUNCHER_VERSION);
   }
   await Promise.allSettled([loadVersion(), refreshStatus()]);
+  checkLauncherUpdate();
 
   if (gameStatus && gameStatus.theme && gameStatus.theme !== currentThemeId) {
     applyTheme(gameStatus.theme, false);

@@ -15,7 +15,7 @@ from gi.repository import Gtk, WebKit2, GLib, Gdk, GdkPixbuf
 GLib.set_prgname("wuwavh-launcher")
 GLib.set_application_name("WuWaVH Launcher")
 
-import sys, os, json, threading, time
+import sys, os, json, threading, time, subprocess
 
 # ── Paths ────────────────────────────────────────────────────────────────────
 BASE_DIR           = os.path.dirname(os.path.abspath(__file__))
@@ -24,7 +24,7 @@ BUNDLED_ASSETS_DIR = os.path.join(FRONTEND_DIR, "assets")
 USER_ASSETS_DIR    = os.path.expanduser("~/.config/wuwavh/assets")
 
 sys.path.insert(0, BASE_DIR)
-from backend import downloader, game, performance, version
+from backend import downloader, game, performance, version, launcher_update
 
 PAK_DIR = game.get_paks_dir()
 
@@ -88,6 +88,16 @@ class IPC:
 
             case "get_status":
                 return game.get_status()
+
+            case "check_launcher_update":
+                return launcher_update.check_update()
+
+            case "install_launcher_update":
+                if getattr(self, "_launcher_update_running", False):
+                    return {"status": "running"}
+                self._launcher_update_running = True
+                threading.Thread(target=self._do_launcher_update, daemon=True).start()
+                return {"status": "started"}
 
             case "open_game_folder":
                 game.open_game_folder()
@@ -456,6 +466,22 @@ class IPC:
         js = f"window.__onEvent({json.dumps(event)}, {json.dumps(data)})"
         GLib.idle_add(self.win.run_js, js)
 
+    def _do_launcher_update(self):
+        try:
+            # Recheck the release immediately before downloading; never trust
+            # version or asset URLs supplied by the web view.
+            info = launcher_update.check_update()
+            target = launcher_update.install_update(
+                info,
+                lambda done, total: self.emit("launcher_update_progress", {"done": done, "total": total}),
+            )
+            self.emit("launcher_update_done", {"version": info["latest_version"]})
+            GLib.idle_add(self.win.restart_launcher, target)
+        except Exception as exc:
+            self.emit("launcher_update_error", {"error": str(exc)})
+        finally:
+            self._launcher_update_running = False
+
     def _reply(self, req_id, result):
         if req_id and result is not None:
             js = f"window.__resolve({json.dumps(req_id)}, {json.dumps(result)})"
@@ -582,6 +608,16 @@ class LauncherWindow(Gtk.Window):
             self.webview.evaluate_javascript(js, -1, None, None, None, None, None)
         except Exception as e:
             print(f"[JS eval] {e}")
+
+    def restart_launcher(self, appimage: str):
+        try:
+            env = os.environ.copy()
+            for key in ("APPIMAGE", "APPDIR", "LD_LIBRARY_PATH", "PYTHONPATH"):
+                env.pop(key, None)
+            subprocess.Popen([appimage], env=env, start_new_session=True)
+            Gtk.main_quit()
+        except Exception as exc:
+            self._ipc.emit("launcher_update_error", {"error": f"Đã cài bản mới nhưng không thể khởi động lại: {exc}"})
 
     # ── Window drag ──────────────────────────────────────────────────────────
 

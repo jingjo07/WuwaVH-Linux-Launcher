@@ -1685,3 +1685,49 @@ body.tab-theme #bg-blur-overlay {
   flex-shrink: 0;
   color: #94a3b8;
 }
+
+#launcher-update-banner {
+  position: fixed;
+  right: 22px;
+  bottom: 58px;
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: min(440px, calc(100vw - 44px));
+  padding: 15px;
+  border: 1px solid rgba(130, 205, 209, .35);
+  border-radius: 12px;
+  background: #101b25;
+  color: #f7fbfc;
+  box-shadow: 0 16px 44px rgba(0, 0, 0, .48);
+}
+
+#launcher-update-banner[hidden] { display: none; }
+.launcher-update-copy { display: flex; flex: 1; min-width: 0; flex-direction: column; gap: 4px; }
+.launcher-update-copy strong { font-size: 13px; }
+.launcher-update-copy span { color: #bfd0d6; font-size: 11px; line-height: 1.4; }
+#launcher-update-action {
+  flex: 0 0 auto;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 7px;
+  background: #70dec7;
+  color: #082222;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+#launcher-update-action:disabled { opacity: .6; cursor: progress; }
+#launcher-update-dismiss {
+  flex: 0 0 auto;
+  align-self: flex-start;
+  border: 0;
+  background: transparent;
+  color: #d8e5e9;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+#launcher-update-banner button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }

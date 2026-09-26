@@ -590,7 +590,10 @@
               points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
             </polygon>
           </svg>
-        </span> Cập nhật Launcher (Media)
+        </span> Cập nhật Media
+      </div>
+      <div class="ctx-item" id="ctx-check-launcher-update">
+        <span class="ctx-icon" aria-hidden="true">↻</span> Cập nhật Launcher
       </div>
       <div class="ctx-item" id="ctx-kill">
         <span class="ctx-icon">
@@ -1218,6 +1221,14 @@
   </div>
 
   <!-- ── Toast ── -->
+  <div id="launcher-update-banner" role="status" hidden>
+    <div class="launcher-update-copy">
+      <strong id="launcher-update-title">Có bản Launcher mới</strong>
+      <span id="launcher-update-detail"></span>
+    </div>
+    <button type="button" id="launcher-update-action">Cập nhật</button>
+    <button type="button" id="launcher-update-dismiss" aria-label="Đóng thông báo cập nhật">×</button>
+  </div>
   <div id="toast-container"></div>
 
   <!-- ── Audio ── -->
