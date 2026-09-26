@@ -10,7 +10,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 APP_DIR="$SCRIPT_DIR/build/WuWaVH.AppDir"
 OUTPUT_NAME="WuWaVH-Launcher-x86_64.AppImage"
 
-LAUNCHER_VERSION=$(python3 -c "import sys; sys.path.insert(0, '$SCRIPT_DIR'); from backend.version import LAUNCHER_VERSION; print(LAUNCHER_VERSION)" 2>/dev/null || echo "1.1")
+LAUNCHER_VERSION=$(PYTHONPATH="$SCRIPT_DIR" python3 -c 'from backend.version import LAUNCHER_VERSION; print(LAUNCHER_VERSION)')
 
 echo "=================================================="
 echo "   Đang đóng gói WuWaVH Launcher v${LAUNCHER_VERSION} thành AppImage   "

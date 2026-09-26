@@ -49,6 +49,7 @@ window.__onEvent = (event, data) => {
     case "update_assets_done": onUpdateAssetsDone(data); break;
     case "update_assets_error": onUpdateAssetsError(data); break;
     case "launcher_update_progress": onLauncherUpdateProgress(data); break;
+    case "launcher_update_engine": onLauncherUpdateEngine(data); break;
     case "launcher_update_done": onLauncherUpdateDone(data); break;
     case "launcher_update_error": onLauncherUpdateError(data); break;
   }
@@ -147,39 +148,38 @@ function updateLauncherVersionUI(ver) {
 
 let launcherUpdateInfo = null;
 let launcherUpdateBusy = false;
+let launcherUpdateEngine = "";
 
-async function checkLauncherUpdate(manual = false) {
-  try {
-    const info = await ipc("check_launcher_update");
-    launcherUpdateInfo = info;
-    const banner = document.getElementById("launcher-update-banner");
-    if (!info.available) {
-      if (banner) banner.hidden = true;
-      if (manual) toast("Launcher đã là phiên bản mới nhất.", "success");
-      return;
-    }
-    document.getElementById("launcher-update-title").textContent = `Launcher v${info.latest_version} đã có sẵn`;
-    document.getElementById("launcher-update-detail").textContent = info.can_install
-      ? `Bạn đang dùng v${info.current_version}. Nhấn cập nhật để tải và khởi động lại.`
-      : `Bạn đang dùng v${info.current_version}. Mở GitHub để tải bản mới.`;
-    document.getElementById("launcher-update-action").textContent = info.can_install ? "Cập nhật" : "Xem bản mới";
-    if (banner) banner.hidden = false;
-  } catch (error) {
-    if (manual) toast(`Không thể kiểm tra bản mới: ${error.message}`, "error");
-  }
+async function checkLauncherUpdate(notify = false) {
+  const info = await ipc("check_launcher_update");
+  launcherUpdateInfo = info;
+  const label = document.getElementById("ctx-launcher-update-label");
+  if (label) label.textContent = info.available
+    ? `Cập nhật Launcher · v${info.latest_version}` : "Cập nhật Launcher";
+  if (notify && info.available) toast(`Có Launcher v${info.latest_version} mới. Mở menu để cập nhật.`, "info");
+  return info;
 }
 
 async function startLauncherUpdate() {
-  if (!launcherUpdateInfo || launcherUpdateBusy) return;
-  if (!launcherUpdateInfo.can_install) {
-    if (launcherUpdateInfo.release_url) ipc("open_url", { url: launcherUpdateInfo.release_url }).catch(e => toast(e.message, "error"));
+  if (launcherUpdateBusy) return;
+  if (modUpdateInProgress || mediaUpdateInProgress) {
+    toast("Hãy chờ lượt cập nhật hiện tại hoàn tất.", "info");
     return;
   }
   launcherUpdateBusy = true;
-  const button = document.getElementById("launcher-update-action");
-  button.disabled = true;
-  button.textContent = "Đang tải...";
+  launcherUpdateEngine = "";
+  switchTab("home");
+  showUpdateProgress(0, "Đang kiểm tra phiên bản Launcher...");
   try {
+    const info = await checkLauncherUpdate();
+    if (!info.available) {
+      launcherUpdateBusy = false;
+      showUpdateProgress(100, "✓ LAUNCHER ĐÃ LÀ PHIÊN BẢN MỚI NHẤT");
+      hideUpdateProgress(2500);
+      return;
+    }
+    if (!info.can_install) throw new Error("Bản phát hành không có AppImage hoặc checksum hợp lệ");
+    showUpdateProgress(0, `Đang chuẩn bị tải Launcher v${info.latest_version}...`);
     await ipc("install_launcher_update");
   } catch (error) {
     onLauncherUpdateError({ error: error.message });
@@ -187,30 +187,31 @@ async function startLauncherUpdate() {
 }
 
 function onLauncherUpdateProgress(data) {
-  const detail = document.getElementById("launcher-update-detail");
-  if (detail) detail.textContent = data.total
-    ? `Đang tải bản mới: ${Math.min(100, Math.round(data.done / data.total * 100))}%`
-    : `Đang tải bản mới: ${(data.done / 1048576).toFixed(1)} MB`;
+  const pct = data.total ? Math.min(100, Math.round(data.done / data.total * 100)) : 0;
+  const engine = launcherUpdateEngine ? ` · ${launcherUpdateEngine}` : "";
+  const size = data.total
+    ? ` · ${(data.done / 1048576).toFixed(1)} / ${(data.total / 1048576).toFixed(1)} MB`
+    : ` · ${(data.done / 1048576).toFixed(1)} MB`;
+  showUpdateProgress(pct, `Launcher v${launcherUpdateInfo?.latest_version || "mới"}${engine}${size}`);
+}
+
+function onLauncherUpdateEngine(data) {
+  launcherUpdateEngine = data.engine === "aria2c" ? "aria2c"
+    : data.engine === "dynamic" ? "đa luồng Python" : "urllib";
+  showUpdateProgress(0, `Đang tải Launcher bằng ${launcherUpdateEngine}...`);
 }
 
 function onLauncherUpdateDone(data) {
-  const detail = document.getElementById("launcher-update-detail");
-  if (detail) detail.textContent = `Đã cài v${data.version}. Đang khởi động lại...`;
+  showUpdateProgress(100, `✓ ĐÃ CÀI LAUNCHER v${data.version} · ĐANG KHỞI ĐỘNG LẠI`);
 }
 
 function onLauncherUpdateError(data) {
   launcherUpdateBusy = false;
-  const button = document.getElementById("launcher-update-action");
-  if (button) { button.disabled = false; button.textContent = "Thử lại"; }
-  const detail = document.getElementById("launcher-update-detail");
-  if (detail) detail.textContent = data.error || "Không thể cập nhật Launcher.";
-  toast(`Cập nhật Launcher thất bại: ${data.error}`, "error");
+  const error = data.error || "Không thể cập nhật Launcher.";
+  showUpdateProgress(0, `❌ Cập nhật Launcher: ${error}`, true);
+  toast(`Cập nhật Launcher thất bại: ${error}`, "error");
+  hideUpdateProgress(4000);
 }
-
-const launcherUpdateAction = document.getElementById("launcher-update-action");
-if (launcherUpdateAction) launcherUpdateAction.onclick = startLauncherUpdate;
-const launcherUpdateDismiss = document.getElementById("launcher-update-dismiss");
-if (launcherUpdateDismiss) launcherUpdateDismiss.onclick = () => { document.getElementById("launcher-update-banner").hidden = true; };
 
 // Immediate initial sync from window.LAUNCHER_VERSION (injected via WebKit or version.js)
 if (typeof window !== "undefined" && window.LAUNCHER_VERSION) {
@@ -1046,7 +1047,7 @@ if (ctxUpdateLauncher) {
 const ctxCheckLauncherUpdate = document.getElementById("ctx-check-launcher-update");
 if (ctxCheckLauncherUpdate) ctxCheckLauncherUpdate.onclick = () => {
   toggleMenu(false);
-  checkLauncherUpdate(true);
+  startLauncherUpdate();
 };
 
 const ctxKill = document.getElementById("ctx-kill");
@@ -1804,7 +1805,13 @@ function renderThemeList() {
 
 // ── Update Progress System (Inline Bottom Progress Bar) ─────────────────────
 
+let updateProgressHideTimer = null;
+
 function showUpdateProgress(pct, statusText, isError = false) {
+  if (updateProgressHideTimer) {
+    clearTimeout(updateProgressHideTimer);
+    updateProgressHideTimer = null;
+  }
   const configs = [
     { box: "cyber-launch-progress", bar: "cyber-progress-bar", pct: "cyber-progress-pct", status: "cyber-progress-status" },
     { box: "classic-launch-progress", bar: "classic-progress-bar", pct: "classic-progress-pct", status: "classic-progress-status" },
@@ -1843,11 +1850,13 @@ function showUpdateProgress(pct, statusText, isError = false) {
 
 function hideUpdateProgress(delay = 0) {
   const boxIds = ["cyber-launch-progress", "classic-launch-progress", "modern-launch-progress"];
-  setTimeout(() => {
+  if (updateProgressHideTimer) clearTimeout(updateProgressHideTimer);
+  updateProgressHideTimer = setTimeout(() => {
     boxIds.forEach(id => {
       const el = document.getElementById(id);
       if (el) el.style.display = "none";
     });
+    updateProgressHideTimer = null;
   }, delay);
 }
 
@@ -1896,6 +1905,7 @@ function onUpdateAssetsProgress(d) {
 }
 
 function onUpdateAssetsDone() {
+  mediaUpdateInProgress = false;
   showUpdateProgress(100, "✓ CẬP NHẬT MEDIA LAUNCHER HOÀN TẤT!");
   toast("✓ Đã tải video và nhạc nền mới nhất!", "success");
   if (typeof initBgMedia === "function") initBgMedia();
@@ -1903,6 +1913,7 @@ function onUpdateAssetsDone() {
 }
 
 function onUpdateAssetsError(d) {
+  mediaUpdateInProgress = false;
   const errMsg = (d && d.error) || "Lỗi không xác định";
   showUpdateProgress(0, `❌ Lỗi: ${errMsg}`, true);
   toast(`Lỗi tải Media: ${errMsg}`, "error");
@@ -1910,9 +1921,14 @@ function onUpdateAssetsError(d) {
 }
 
 let modUpdateInProgress = false;
+let mediaUpdateInProgress = false;
 
 function startUpdate() {
   if (modUpdateInProgress) return;
+  if (launcherUpdateBusy || mediaUpdateInProgress) {
+    toast("Hãy chờ lượt cập nhật hiện tại hoàn tất.", "info");
+    return;
+  }
   modUpdateInProgress = true;
   if (modernQuickUpdate) modernQuickUpdate.disabled = true;
   switchTab("home");
@@ -1922,6 +1938,12 @@ function startUpdate() {
 }
 
 function startUpdateAssets() {
+  if (mediaUpdateInProgress) return;
+  if (launcherUpdateBusy || modUpdateInProgress) {
+    toast("Hãy chờ lượt cập nhật hiện tại hoàn tất.", "info");
+    return;
+  }
+  mediaUpdateInProgress = true;
   switchTab("home");
   showUpdateProgress(0, "Đang kết nối máy chủ Media...");
   toast("Đang tải Media Launcher mới...", "info");
@@ -2134,7 +2156,7 @@ async function init() {
     updateLauncherVersionUI(window.LAUNCHER_VERSION);
   }
   await Promise.allSettled([loadVersion(), refreshStatus()]);
-  checkLauncherUpdate();
+  checkLauncherUpdate(true).catch(() => { });
 
   if (gameStatus && gameStatus.theme && gameStatus.theme !== currentThemeId) {
     applyTheme(gameStatus.theme, false);

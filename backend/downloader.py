@@ -247,7 +247,8 @@ def _download_aria2(url: str, dest: str, total_size: int, headers_base: dict, pr
         progress_cb(total_size, total_size)
 
 
-def download_file(url: str, dest: str, progress_cb=None, num_workers: int = 8, chunk_size: int = None):
+def download_file(url: str, dest: str, progress_cb=None, num_workers: int = 8, chunk_size: int = None,
+                  strict_partial_fallback: bool = False, engine_cb=None):
     """
     Download a file with high-performance adaptive multi-engine architecture:
     1. Primary Engine: Native Aria2c (16 parallel TCP streams, C++ async I/O)
@@ -305,6 +306,8 @@ def download_file(url: str, dest: str, progress_cb=None, num_workers: int = 8, c
     if supports_range and total_size > 2 * 1024 * 1024:
         # 2a. Primary Engine: Native Aria2c (16 parallel connections)
         if _find_aria2():
+            if engine_cb:
+                engine_cb("aria2c")
             try:
                 _download_aria2(resolved_url, tmp_dest, total_size, headers_base, progress_cb)
                 if os.path.exists(dest):
@@ -313,7 +316,8 @@ def download_file(url: str, dest: str, progress_cb=None, num_workers: int = 8, c
                 if progress_cb:
                     progress_cb(total_size, total_size)
                 return
-            except Exception:
+            except Exception as exc:
+                partial = os.path.exists(tmp_dest) and os.path.getsize(tmp_dest) > 0
                 if os.path.exists(tmp_dest):
                     try: os.remove(tmp_dest)
                     except Exception: pass
@@ -321,8 +325,14 @@ def download_file(url: str, dest: str, progress_cb=None, num_workers: int = 8, c
                 if os.path.exists(ctrl_file):
                     try: os.remove(ctrl_file)
                     except Exception: pass
+                if strict_partial_fallback and partial:
+                    raise RuntimeError(
+                        f"aria2c bị gián đoạn khi đang tải; bản cũ được giữ nguyên: {exc}"
+                    ) from exc
 
         # 2b. Secondary Engine: Python Dynamic Chunk Work-Stealing
+        if engine_cb:
+            engine_cb("dynamic")
         try:
             _download_dynamic_chunks(resolved_url, tmp_dest, total_size, num_workers, chunk_size, headers_base, progress_cb)
             if os.path.exists(dest):
@@ -331,12 +341,19 @@ def download_file(url: str, dest: str, progress_cb=None, num_workers: int = 8, c
             if progress_cb:
                 progress_cb(total_size, total_size)
             return
-        except Exception:
+        except Exception as exc:
+            partial = os.path.exists(tmp_dest) and os.path.getsize(tmp_dest) > 0
             if os.path.exists(tmp_dest):
                 try: os.remove(tmp_dest)
                 except Exception: pass
+            if strict_partial_fallback and partial:
+                raise RuntimeError(
+                    f"Bộ tải nhiều luồng bị gián đoạn; bản cũ được giữ nguyên: {exc}"
+                ) from exc
 
     # 3. Fallback: single-stream buffered download with 512KB buffer
+    if engine_cb:
+        engine_cb("urllib")
     _download_single_stream(resolved_url, tmp_dest, headers_base, progress_cb)
     if os.path.exists(dest):
         os.remove(dest)

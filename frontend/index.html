@@ -37,7 +37,7 @@
     <div class="cyber-logo-area cyber-only">
       <img src="assets/icon_cor.png" alt="Wuthering Waves" class="cyber-logo-img">
       <div class="cyber-ver-tag">
-        <span class="cyber-launcher-ver">v1.2</span>
+        <span class="cyber-launcher-ver">v—</span>
         <span class="cyber-ver-sep">&bull;</span>
         <span id="vh-version-cyber">VH v—</span>
       </div>
@@ -150,7 +150,7 @@
         </div>
         <div class="drawer-titles">
           <span class="drawer-main-title">Wuthering Waves</span>
-          <span class="drawer-sub-title">VIETNAMESE LAUNCHER v1.2</span>
+          <span class="drawer-sub-title">VIETNAMESE LAUNCHER v—</span>
         </div>
       </div>
       <button class="drawer-collapse-btn" id="drawer-collapse-btn" title="Thu gọn">
@@ -347,7 +347,7 @@
         </div>
 
         <div id="version-footer" class="classic-version-footer">
-          <span class="launcher-ver-lbl">Launcher v1.2</span> &bull; 
+          <span class="launcher-ver-lbl">Launcher v—</span> &bull;
           <span id="vh-version" class="footer-vh-lbl">VH v—</span> &bull; 
           <span id="launcher-badge" class="launcher-tag" title="Nhấn để đổi Launcher chạy game">
             <svg class="theme-svg-inline" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
@@ -436,7 +436,7 @@
         </div>
 
         <div class="modern-footer-tag">
-          <span class="launcher-ver-lbl">Launcher v1.2</span> &nbsp;&bull;&nbsp; 
+          <span class="launcher-ver-lbl">Launcher v—</span> &nbsp;&bull;&nbsp;
           <span id="vh-version-modern">VH v—</span> &nbsp;&bull;&nbsp; <span
             id="launcher-badge-modern" class="launcher-tag" title="Nhấn để đổi Launcher chạy game">
             <svg class="theme-svg-inline" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
@@ -533,7 +533,7 @@
               <span id="cyber-game-size-label">Sẵn sàng</span>
             </div>
             <div class="cyber-meta-divider"></div>
-            <span class="cyber-launcher-ver-tag" style="font-size: 10px; color: var(--text-dim, #888); font-family: 'JetBrains Mono', monospace; font-weight: 600;">v1.2</span>
+            <span class="cyber-launcher-ver-tag" style="font-size: 10px; color: var(--text-dim, #888); font-family: 'JetBrains Mono', monospace; font-weight: 600;">v—</span>
           </div>
 
           <!-- Quick Options Menu Button -->
@@ -593,7 +593,7 @@
         </span> Cập nhật Media
       </div>
       <div class="ctx-item" id="ctx-check-launcher-update">
-        <span class="ctx-icon" aria-hidden="true">↻</span> Cập nhật Launcher
+        <span class="ctx-icon" aria-hidden="true">↻</span> <span id="ctx-launcher-update-label">Cập nhật Launcher</span>
       </div>
       <div class="ctx-item" id="ctx-kill">
         <span class="ctx-icon">
@@ -1221,15 +1221,7 @@
   </div>
 
   <!-- ── Toast ── -->
-  <div id="launcher-update-banner" role="status" hidden>
-    <div class="launcher-update-copy">
-      <strong id="launcher-update-title">Có bản Launcher mới</strong>
-      <span id="launcher-update-detail"></span>
-    </div>
-    <button type="button" id="launcher-update-action">Cập nhật</button>
-    <button type="button" id="launcher-update-dismiss" aria-label="Đóng thông báo cập nhật">×</button>
-  </div>
-  <div id="toast-container"></div>
+  <div id="toast-container" aria-live="polite"></div>
 
   <!-- ── Audio ── -->
   <audio id="bgm" loop autoplay preload="auto"></audio>

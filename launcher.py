@@ -474,6 +474,7 @@ class IPC:
             target = launcher_update.install_update(
                 info,
                 lambda done, total: self.emit("launcher_update_progress", {"done": done, "total": total}),
+                lambda engine: self.emit("launcher_update_engine", {"engine": engine}),
             )
             self.emit("launcher_update_done", {"version": info["latest_version"]})
             GLib.idle_add(self.win.restart_launcher, target)
@@ -614,6 +615,8 @@ class LauncherWindow(Gtk.Window):
             env = os.environ.copy()
             for key in ("APPIMAGE", "APPDIR", "LD_LIBRARY_PATH", "PYTHONPATH"):
                 env.pop(key, None)
+            # AppImage chạy được cả trên máy không có FUSE.
+            env["APPIMAGE_EXTRACT_AND_RUN"] = "1"
             subprocess.Popen([appimage], env=env, start_new_session=True)
             Gtk.main_quit()
         except Exception as exc:
